@@ -18,11 +18,11 @@ function Registre({}: Props) {
                     <input type="text" id='passwordConf' className='h-10 rounded-sm'/>
                 </form>
             </div>
-            <div className='bg-secondary w-[40%] max-md:w-[0%] rounded-s-badge flex flex-col gap-y-5 justify-center items-center text-secondary-content'>
+            <div className='bg-secondary w-[40%] max-md:hidden rounded-s-badge flex flex-col gap-y-5 justify-center items-center text-secondary-content'>
                 <Image alt='' className='text-' src="/fichiers4u.svg" height={60} width={60} />
                 <h1 className='text-4xl text-center'>welcome back!</h1>
                 <p className='text-xl text-center px-1'>Enter your personal details to use all of site features</p>
-                <button className='border border-neutral-content px-7 py-2 rounded-md'>Sign In</button>
+                <button className='border border-neutral-content px-7 py-2 rounded-md hover:bg-neutral-content transition-all ease-linear delay-50'>Sign In</button>
             </div>
         </div>
         
