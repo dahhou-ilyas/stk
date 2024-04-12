@@ -1,4 +1,5 @@
 import Registre from '@/components/registre'
+import Image from 'next/image'
 import React from 'react'
 
 type Props = {}
