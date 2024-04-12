@@ -1,7 +1,7 @@
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, setPersistence, browserLocalPersistence } from 'firebase/auth';
 import { auth } from './firebase';
 
-setPersistence(auth,  browserLocalPersistence);
+
 
 //Sign in functionality
 export const SignIn = async (email:string, password:string) => {

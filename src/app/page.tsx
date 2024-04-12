@@ -1,5 +1,3 @@
-import Image from "next/image";
-import light from '../../public/lighting.jpeg'
 
 export default function Home() {
   return (
