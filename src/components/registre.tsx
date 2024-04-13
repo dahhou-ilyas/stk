@@ -4,9 +4,11 @@ import Image from 'next/image'
 import React, { useState } from 'react'
 import Spiner from './spinner';
 
-type Props = {}
+type Props = {
+    setIsLogin:React.Dispatch<React.SetStateAction<boolean>>
+}
 
-function Registre({}: Props) {
+function Registre({setIsLogin}: Props) {
     const [email,setEmail]=useState<string>("");
     const [password,setPassword]=useState<string>("");
     const [passwordConf,setPasswordConf]=useState<string>("");
@@ -21,6 +23,10 @@ function Registre({}: Props) {
             alert("passwords not same !!!")
         }
     }
+
+    const toggleAuthMode = () => {
+        setIsLogin(prevState => !prevState);
+    };
     
   return (
     <> {
@@ -40,17 +46,15 @@ function Registre({}: Props) {
                     <button className='text-secondary border border-secondary py-2 w-[50%] mx-auto mt-5'>Create</button>
                 </form>
             </div>
-            <div className='bg-secondary w-[40%] max-md:hidden rounded-s-badge flex flex-col gap-y-5 justify-center items-center text-secondary-content'>
+            <div className='bg-secondary w-[40%] max-md:hidden raidus1 flex flex-col gap-y-5 justify-center items-center text-secondary-content'>
                 <Image alt='' className='text-' src="/fichiers4u.svg" height={60} width={60} />
                 <h1 className='text-4xl text-center'>welcome back!</h1>
                 <p className='text-xl text-center px-1'>Enter your personal details to use all of site features</p>
-                <button className='border border-neutral-content px-7 py-2 rounded-md hover:bg-neutral-content transition-all ease-linear delay-50'>Sign In</button>
+                <button onClick={toggleAuthMode} className='border border-neutral-content px-7 py-2 rounded-md hover:bg-neutral-content transition-all ease-linear delay-50'>Sign In</button>
             </div>
         </div>
         )
     }
-        
-        
     </>
   )
 }

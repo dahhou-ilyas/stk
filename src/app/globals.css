@@ -2,4 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+.raidus1{
+  border-top-left-radius: 90px;
+  border-bottom-left-radius: 200px;
+}
 
+.raidus2{
+  border-top-right-radius: 200px;
+  border-bottom-right-radius: 90px;
+}
