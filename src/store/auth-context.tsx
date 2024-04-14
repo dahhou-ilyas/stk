@@ -79,10 +79,6 @@ function AuthProvider({ children }:  {children: React.ReactNode}) {
         return  unsubscribe;
     },  []);
 
-    if (isAuthLoading) return (
-        <Spiner/>
-    );
-
   return (
     <AuthContext.Provider  value={authValues}>{children}</AuthContext.Provider>
   )
