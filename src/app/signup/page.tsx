@@ -13,7 +13,7 @@ const LoginPage = (props: Props) => {
   return (
     <>
         {
-          isLogin ? <Login setIsLogin={setIsLogin} /> : <Registre setIsLogin={setIsLogin}/>
+          isLogin ? <Registre setIsLogin={setIsLogin}/>:<Login setIsLogin={setIsLogin} />
         }
     </>
   )

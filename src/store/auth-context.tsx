@@ -15,6 +15,7 @@ export  interface  IAuth {
     signIn: (email:string, password:string,onSuccess: () =>  void) =>  void;
     signUp: (email:string, password:string) =>  void;
     signOut: () =>  void;
+    isSignUp:  boolean;
 }
 
 export const AuthContext = createContext<IAuth>({
@@ -23,6 +24,7 @@ export const AuthContext = createContext<IAuth>({
     signIn: () => {},
     signUp: () => {},
     signOut: () => {},
+    isSignUp:false
 });
 
 export  const  useAuth  = () =>  useContext(AuthContext);
@@ -33,14 +35,15 @@ function AuthProvider({ children }:  {children: React.ReactNode}) {
     const [currentUser,  setCurrentUser] =  useState<User  |  null>(null);
     const [isLoading,  setIsLoading] =  useState<boolean>(false);
     const [isAuthLoading,  setIsAuthLoading] =  useState<boolean>(true);
+    const [isSignUp,  setIsSignUp] =  useState<boolean>(false);
 
     const signUp = (email:string, password:string) => {
         setIsLoading(true);
         SignUp(email,password).then(userCredential=>{
             const { user } = userCredential;
             if (user) {
-                setCurrentUser(user);
-                router.push('/')
+                setIsLoading(false)
+                setIsSignUp(true);
             }else{
                 setIsLoading(false);
             }
@@ -56,10 +59,33 @@ function AuthProvider({ children }:  {children: React.ReactNode}) {
            })
     }
     const signIn = async (email:string, password:string,  onSuccess: () =>  void) => {
-        //implement sign in here - which is implemented below
+        setIsLoading(true);
+        SignIn(email,password).then(userCredential  =>{
+            const { user } =  userCredential;
+            if(user){
+                setCurrentUser(user);
+                router.push("/uploads")
+            }else{
+                setIsLoading(false);
+            }
+        }).catch(error  => {
+            if  (error.code  ===  'auth/wrong-password') {
+             //show error
+            } else  if  (error.code  ===  'auth/too-many-requests') {
+             //show error
+            }
+            setIsLoading(false);
+        });
     }
     const signOut = async () => {
-        //implement sign out here - which is implemented below
+        setIsLoading(true);
+        try {
+            await SignOut();
+            setCurrentUser(null);
+            router.push('/signup')
+        } catch  (error) {
+            setIsLoading(false);
+        }
     }
 
     const authValues: IAuth = {
@@ -68,12 +94,12 @@ function AuthProvider({ children }:  {children: React.ReactNode}) {
         signIn,
         signUp,
         signOut,
+        isSignUp:isSignUp
     }
 
     useEffect(() => {
         //onAuthStateChanged check if the user is still logged in or not
         const  unsubscribe  =  onAuthStateChanged(auth,  user  => {
-         setCurrentUser(user);
          setIsAuthLoading(false);
         });
         return  unsubscribe;

@@ -4,6 +4,7 @@ import Image from 'next/image'
 import React, { useState } from 'react'
 import Spiner from './spinner';
 
+
 type Props = {
     setIsLogin:React.Dispatch<React.SetStateAction<boolean>>
 }
@@ -12,11 +13,10 @@ function Registre({setIsLogin}: Props) {
     const [email,setEmail]=useState<string>("");
     const [password,setPassword]=useState<string>("");
     const [passwordConf,setPasswordConf]=useState<string>("");
-    const {signUp,loading}=useAuth();
+    const {signUp,loading,isSignUp}=useAuth();
 
     function signUpHandle(e:React.SyntheticEvent){
         e.preventDefault();
-        console.log(loading);
         if(password===passwordConf){
             signUp(email,password);
         }else{

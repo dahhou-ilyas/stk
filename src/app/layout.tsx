@@ -17,8 +17,8 @@ export default function RootLayout({
   return (
     <html lang="en" data-theme="forest">
       <body className={inter.className +" h-[100vh]"} >
-        <NavBar/>
         <AuthProvider>
+          <NavBar/>
           {children}
         </AuthProvider>
       </body>
