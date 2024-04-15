@@ -1,5 +1,10 @@
+"use client"
+
+import { useAuth } from "@/store/auth-context";
 
 export default function Home() {
+  const {user}=useAuth();
+  console.log(user);
   return (
     <div className="flex flex-row items-center">
       <div className="p-10 mt-7 w-[50%]">

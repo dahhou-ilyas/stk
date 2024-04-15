@@ -3,6 +3,7 @@ import { useAuth } from '@/store/auth-context';
 import Image from 'next/image'
 import React, { useState } from 'react'
 import Spiner from './spinner';
+import { toast } from 'react-hot-toast';
 
 type Props = {
     setIsLogin:React.Dispatch<React.SetStateAction<boolean>>
@@ -15,7 +16,14 @@ function Login({setIsLogin}: Props) {
 
     function signUpHandle(e:React.SyntheticEvent){
         e.preventDefault();
-        console.log(loading);
+        if(password!="" && email!=""){
+            signIn(email,password,()=>{
+                setEmail("");
+                setPassword('');
+            });
+        }else{
+            toast.error("email or password are not provide")
+        }
     }
 
     const toggleAuthMode = () => {

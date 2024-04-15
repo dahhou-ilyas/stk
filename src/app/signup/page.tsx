@@ -9,7 +9,7 @@ type Props = {}
 const LoginPage = (props: Props) => {
 
   const [isLogin,setIsLogin]=useState(true);
-
+  
   return (
     <>
         {

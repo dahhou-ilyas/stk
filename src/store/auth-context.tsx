@@ -12,7 +12,7 @@ export  interface  IAuth {
     user:  User  |  null;  //type User comes from firebase
     loading:  boolean;
     signIn: (email:string, password:string,onSuccess: () =>  void) =>  void;
-    signUp: (email:string, password:string) =>  void;
+    signUp: (email:string, password:string,username:string) =>  void;
     signOut: () =>  void;
 }
 
@@ -33,9 +33,9 @@ function AuthProvider({ children }:  {children: React.ReactNode}) {
     const [isLoading,  setIsLoading] =  useState<boolean>(false);
     const [isAuthLoading,  setIsAuthLoading] =  useState<boolean>(true);
 
-    const signUp = (email:string, password:string) => {
+    const signUp = (email:string, password:string,username: string) => {
         setIsLoading(true);
-        SignUp(email,password).then(userCredential=>{
+        SignUp(email,password,username).then(userCredential=>{
             const { user } = userCredential;
             if (user) {
                 toast.success('your signup is successfully done');
@@ -46,9 +46,9 @@ function AuthProvider({ children }:  {children: React.ReactNode}) {
         }).catch(error=>{
             //check for error
             if (error.code  ===  'auth/email-already-in-use') {
-             //show an alert or console
+                toast.error('email already in use');
             } else if (error.code  ===  'auth/too-many-requests') {
-             //do something like an alert
+                toast.error('too many requests');
             }
             // you can check for more error like email not valid or something
             setIsLoading(false);
@@ -66,9 +66,9 @@ function AuthProvider({ children }:  {children: React.ReactNode}) {
             }
         }).catch(error  => {
             if  (error.code  ===  'auth/wrong-password') {
-             //show error
+             toast.error("wrong password")
             } else  if  (error.code  ===  'auth/too-many-requests') {
-             //show error
+                toast.error("too many requests")
             }
             setIsLoading(false);
         });
@@ -78,6 +78,7 @@ function AuthProvider({ children }:  {children: React.ReactNode}) {
         try {
             await SignOut();
             setCurrentUser(null);
+            setIsLoading(false);
             router.push('/signup')
         } catch  (error) {
             setIsLoading(false);
@@ -95,7 +96,8 @@ function AuthProvider({ children }:  {children: React.ReactNode}) {
     useEffect(() => {
         //onAuthStateChanged check if the user is still logged in or not
         const  unsubscribe  =  onAuthStateChanged(auth,  user  => {
-         setIsAuthLoading(false);
+            setCurrentUser(user)
+            setIsAuthLoading(false);
         });
         return  unsubscribe;
     },  []);

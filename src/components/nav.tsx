@@ -10,10 +10,10 @@ type Props = {}
 
 function NavBar({}: Props) {
   const [nav,setNav]=useState(false);
-  const {user}=useAuth();
+  const {user,signOut}=useAuth();
 
   function onLogout(){
-    
+    signOut();
   }
   const handleResize = () => {
     if (window.innerWidth >= 768) { // Assuming 768px is your md breakpoint

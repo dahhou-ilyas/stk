@@ -3,6 +3,7 @@ import { useAuth } from '@/store/auth-context';
 import Image from 'next/image'
 import React, { useState } from 'react'
 import Spiner from './spinner';
+import { toast } from 'react-hot-toast';
 
 
 type Props = {
@@ -10,20 +11,25 @@ type Props = {
 }
 
 function Registre({setIsLogin}: Props) {
+    const [username,setUsername]=useState<string>("");
     const [email,setEmail]=useState<string>("");
     const [password,setPassword]=useState<string>("");
     const [passwordConf,setPasswordConf]=useState<string>("");
-    const {signUp,loading}=useAuth();
+    const {signUp,loading,user}=useAuth();
 
+    console.log(user);
     function signUpHandle(e:React.SyntheticEvent){
         e.preventDefault();
+        if(password != "" && email != "" && passwordConf != "" && username != ""){
+
+        }
         if(password===passwordConf){
-            signUp(email,password);
+            signUp(email,password,username);
             setEmail("");
             setPassword('');
             setPasswordConf('');
         }else{
-            alert("passwords not same !!!")
+            toast.error('passwords is not same');
         }
     }
 
@@ -39,13 +45,15 @@ function Registre({setIsLogin}: Props) {
             <div className='bg-secondary-content w-[60%] max-w-[70%] h-[70%] flex m-auto mt-10 rounded-lg max-md:bg-black max-lg:w-[80%] overflow-hidden'>
             <div className='w-[60%] flex flex-col max-md:w-[100%]'>
                 <h1 className='text-3xl text-center mt-3 text-secondary font-bold'>Sign Up</h1>
-                <form onSubmit={signUpHandle} className='h-[90%] flex flex-col w-[90%] m-auto justify-center gap-y-4'>
+                <form onSubmit={signUpHandle} className='h-[100%] flex flex-col w-[90%] m-auto justify-center gap-y-2 -mt-12'>
+                    <label htmlFor='email' className='font-bold text-secondary'>User name</label>
+                    <input type="text" id='email' className='h-10 rounded-md' value={username} onChange={e=>setUsername(e.target.value)}/>
                     <label htmlFor='email' className='font-bold text-secondary'>Email</label>
-                    <input type="text" id='email' className='h-10 rounded-sm' value={email} onChange={e=>setEmail(e.target.value)}/>
+                    <input type="text" id='email' className='h-10 rounded-md' value={email} onChange={e=>setEmail(e.target.value)}/>
                     <label htmlFor='password' className='font-bold text-secondary'>Password</label>
-                    <input type="password" id='password' className='h-10 rounded-sm' value={password} onChange={e=>setPassword(e.target.value)}/>
+                    <input type="password" id='password' className='h-10 rounded-md' value={password} onChange={e=>setPassword(e.target.value)}/>
                     <label htmlFor='passwordConf' className='font-bold text-secondary'>Password Confirmation</label>
-                    <input type="password" id='passwordConf' className='h-10 rounded-sm' value={passwordConf} onChange={e=>setPasswordConf(e.target.value)}/>
+                    <input type="password" id='passwordConf' className='h-10 rounded-md' value={passwordConf} onChange={e=>setPasswordConf(e.target.value)}/>
                     <button className='text-secondary border border-secondary py-2 w-[50%] mx-auto mt-5'>Create</button>
                 </form>
             </div>
