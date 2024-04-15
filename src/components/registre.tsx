@@ -13,8 +13,8 @@ function Registre({setIsLogin}: Props) {
     const [email,setEmail]=useState<string>("");
     const [password,setPassword]=useState<string>("");
     const [passwordConf,setPasswordConf]=useState<string>("");
-    const {signUp,loading,isSignUp}=useAuth();
-
+    const {signUp,loading,user}=useAuth();
+    
     function signUpHandle(e:React.SyntheticEvent){
         e.preventDefault();
         if(password===passwordConf){

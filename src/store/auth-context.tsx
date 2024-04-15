@@ -5,8 +5,7 @@ import { createContext } from 'react';
 
 import { User, onAuthStateChanged } from 'firebase/auth'; //type User import
 import { SignUp,SignOut,SignIn } from '@/firebase/AuthService';
-import Image from 'next/image';
-import Spiner from '@/components/spinner';
+import { toast } from 'react-hot-toast';
 
 //IAuth context
 export  interface  IAuth {
@@ -15,7 +14,6 @@ export  interface  IAuth {
     signIn: (email:string, password:string,onSuccess: () =>  void) =>  void;
     signUp: (email:string, password:string) =>  void;
     signOut: () =>  void;
-    isSignUp:  boolean;
 }
 
 export const AuthContext = createContext<IAuth>({
@@ -23,8 +21,7 @@ export const AuthContext = createContext<IAuth>({
     loading: false,
     signIn: () => {},
     signUp: () => {},
-    signOut: () => {},
-    isSignUp:false
+    signOut: () => {}
 });
 
 export  const  useAuth  = () =>  useContext(AuthContext);
@@ -35,15 +32,14 @@ function AuthProvider({ children }:  {children: React.ReactNode}) {
     const [currentUser,  setCurrentUser] =  useState<User  |  null>(null);
     const [isLoading,  setIsLoading] =  useState<boolean>(false);
     const [isAuthLoading,  setIsAuthLoading] =  useState<boolean>(true);
-    const [isSignUp,  setIsSignUp] =  useState<boolean>(false);
 
     const signUp = (email:string, password:string) => {
         setIsLoading(true);
         SignUp(email,password).then(userCredential=>{
             const { user } = userCredential;
             if (user) {
+                toast.success('your signup is successfully done');
                 setIsLoading(false)
-                setIsSignUp(true);
             }else{
                 setIsLoading(false);
             }
@@ -93,8 +89,7 @@ function AuthProvider({ children }:  {children: React.ReactNode}) {
         loading: isLoading,
         signIn,
         signUp,
-        signOut,
-        isSignUp:isSignUp
+        signOut
     }
 
     useEffect(() => {
