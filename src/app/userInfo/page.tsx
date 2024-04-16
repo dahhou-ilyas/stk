@@ -38,13 +38,14 @@ function UserInfo() {
         try {
             await updateProfile(user as User, { displayName, photoURL });
 
-            // Update password
-            if (newPassword && newPassword==newPasswordconf) {
-                await updatePassword(user as User, newPassword);
-            }else{
-                toast.error("passwords are not the same")
+            if(currentPassword){
+                if (newPassword && newPassword==newPasswordconf) {
+                    await updatePassword(user as User, newPassword);
+                }else{
+                    toast.error("passwords are not the same")
+                }
             }
-
+            
             toast.success('Profile updated successfully');
         } catch (error) {
             console.error('Error updating profile:', error);
