@@ -40,6 +40,7 @@ function AuthProvider({ children }:  {children: React.ReactNode}) {
             if (user) {
                 toast.success('your signup is successfully done');
                 setIsLoading(false)
+                router.push('/')
             }else{
                 setIsLoading(false);
             }
@@ -96,7 +97,7 @@ function AuthProvider({ children }:  {children: React.ReactNode}) {
     useEffect(() => {
         //onAuthStateChanged check if the user is still logged in or not
         const  unsubscribe  =  onAuthStateChanged(auth,  user  => {
-            setCurrentUser(user)
+            setCurrentUser(user);
             setIsAuthLoading(false);
         });
         return  unsubscribe;

@@ -17,22 +17,20 @@ function Registre({setIsLogin}: Props) {
     const [passwordConf,setPasswordConf]=useState<string>("");
     const {signUp,loading,user}=useAuth();
 
-    console.log(user);
     function signUpHandle(e:React.SyntheticEvent){
         e.preventDefault();
-        if(password != "" && email != "" && passwordConf != "" && username != ""){
-
-        }
-        if(password===passwordConf){
+        if(password == "" && email == "" && passwordConf == "" && username == ""){
+            toast.error('you have put all information');
+        }else if(password===passwordConf){
             signUp(email,password,username);
             setEmail("");
             setPassword('');
             setPasswordConf('');
+            setUsername('')
         }else{
             toast.error('passwords is not same');
         }
     }
-
     const toggleAuthMode = () => {
         setIsLogin(prevState => !prevState);
     };
@@ -46,8 +44,8 @@ function Registre({setIsLogin}: Props) {
             <div className='w-[60%] flex flex-col max-md:w-[100%]'>
                 <h1 className='text-3xl text-center my-4 text-secondary font-bold'>Sign Up</h1>
                 <form onSubmit={signUpHandle} className='h-[90%] flex flex-col w-[90%] m-auto justify-center gap-y-2 -mt-12'>
-                    <label htmlFor='email' className='font-bold text-secondary'>User name</label>
-                    <input type="text" id='email' className='h-10 rounded-md' value={username} onChange={e=>setUsername(e.target.value)}/>
+                    <label htmlFor='username' className='font-bold text-secondary'>User name</label>
+                    <input type="text" id='username' className='h-10 rounded-md' value={username} onChange={e=>setUsername(e.target.value)}/>
                     <label htmlFor='email' className='font-bold text-secondary'>Email</label>
                     <input type="text" id='email' className='h-10 rounded-md' value={email} onChange={e=>setEmail(e.target.value)}/>
                     <label htmlFor='password' className='font-bold text-secondary'>Password</label>
@@ -66,8 +64,7 @@ function Registre({setIsLogin}: Props) {
                 <h1 className='text-4xl text-center'>welcome back!</h1>
                 <p className='text-xl text-center px-1'>Enter your personal details to use all of site features</p>
                 <button onClick={toggleAuthMode} className='border border-neutral-content px-7 py-2 rounded-md hover:bg-neutral-content transition-all ease-linear delay-50'>Sign In</button>
-            </div>
-            
+            </div>         
         </div>
         )
     }
