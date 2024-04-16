@@ -3,27 +3,18 @@ import React, { useState } from 'react';
 import { useAuth } from '@/store/auth-context';
 import { updateProfile, updatePassword, reauthenticateWithCredential, EmailAuthProvider, User, updateEmail } from 'firebase/auth';
 import Spinner from '@/components/spinner';
+import { toast } from 'react-hot-toast';
 
 function UserInfo() {
     const { user } = useAuth();
-    console.log(user);
     const [displayName, setDisplayName] = useState(user?.displayName || '');
-    const [email, setEmail] = useState(user?.email || '');
-    const [phoneNumber, setPhoneNumber] = useState(user?.phoneNumber || '');
     const [photoURL, setPhotoURL] = useState(user?.photoURL || '');
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
+    const [newPasswordconf, setNewPasswordconf] = useState('');
 
     const handleDisplayNameChange = (e:React.ChangeEvent<HTMLInputElement>) => {
         setDisplayName(e.target.value);
-    };
-
-    const handleEmailChange = (e:React.ChangeEvent<HTMLInputElement>) => {
-        setEmail(e.target.value);
-    };
-
-    const handlePhoneNumberChange = (e:React.ChangeEvent<HTMLInputElement>) => {
-        setPhoneNumber(e.target.value);
     };
 
     const handlePhotoURLChange = (e:React.ChangeEvent<HTMLInputElement>) => {
@@ -38,34 +29,23 @@ function UserInfo() {
         setNewPassword(e.target.value);
     };
 
+    const handleNewPasswordChangeconf=(e:React.ChangeEvent<HTMLInputElement>) =>{
+        setNewPasswordconf(e.target.value);
+    }
+
     const handleSubmit = async (e:React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
             await updateProfile(user as User, { displayName, photoURL });
 
-            // Update email and/or phone number
-            if (user?.email !== email || user.phoneNumber !== phoneNumber) {
-                // Re-authenticate user
-                const credential = EmailAuthProvider.credential(user?.email as string, currentPassword);
-                await reauthenticateWithCredential(user as User, credential);
-
-                // Update email
-                if (user?.email !== email) {
-                    await updateEmail(user as User, email);
-                }
-
-                // Update phone number
-                if (user?.phoneNumber !== phoneNumber) {
-                    // Update phone number logic
-                }
-            }
-
             // Update password
-            if (newPassword) {
+            if (newPassword && newPassword==newPasswordconf) {
                 await updatePassword(user as User, newPassword);
+            }else{
+                toast.error("passwords are not the same")
             }
 
-            console.log('Profile updated successfully');
+            toast.success('Profile updated successfully');
         } catch (error) {
             console.error('Error updating profile:', error);
         }
@@ -91,18 +71,6 @@ function UserInfo() {
                         id='displayName'
                         value={displayName}
                         onChange={handleDisplayNameChange}
-                        className='border border-gray-400 rounded-md p-2 ml-4'
-                    />
-                </div>
-                <div className='flex flex-row justify-center items-center'>
-                    <label htmlFor='phoneNumber' className='text-xl text-accent'>
-                        Phone Number :
-                    </label>
-                    <input
-                        type='text'
-                        id='phoneNumber'
-                        value={phoneNumber}
-                        onChange={handlePhoneNumberChange}
                         className='border border-gray-400 rounded-md p-2 ml-4'
                     />
                 </div>
@@ -139,6 +107,18 @@ function UserInfo() {
                         id='newPassword'
                         value={newPassword}
                         onChange={handleNewPasswordChange}
+                        className='border border-gray-400 rounded-md p-2 ml-4'
+                    />
+                </div>
+                <div className='flex flex-row justify-center items-center'>
+                    <label htmlFor='newPasswordconf' className='text-xl text-accent'>
+                        confirme Password :
+                    </label>
+                    <input
+                        type='password'
+                        id='newPasswordconf'
+                        value={newPassword}
+                        onChange={handleNewPasswordChangeconf}
                         className='border border-gray-400 rounded-md p-2 ml-4'
                     />
                 </div>
