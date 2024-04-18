@@ -40,6 +40,7 @@ function NavBar({}: Props) {
           {user ? (
             <>
               <li className='text-lg' onClick={() => router.push('/userInfo')}><div>{user?.displayName}</div></li>
+              <li className='text-lg' onClick={() => router.push('/uploads')}><div>My Uploads</div></li>
               <li className='text-lg' onClick={onLogout}><div>Logout</div></li>
             </>
           ) : (

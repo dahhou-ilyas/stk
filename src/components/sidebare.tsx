@@ -4,7 +4,7 @@ type Props = {}
 
 function SideBare({}: Props) {
   return (
-    <div className='w-[16%] bg-white/10'>sidebare</div>
+    <div className='max-md:w-[40%] min-w-[20%] bg-white/10'>sidebare</div>
   )
 }
 
