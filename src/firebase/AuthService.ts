@@ -1,6 +1,7 @@
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, setPersistence, browserLocalPersistence, User, updateProfile } from 'firebase/auth';
 import { auth } from './firebase';
-
+import { getStorage, ref, uploadBytes, uploadString } from 'firebase/storage';
+import app from './firebase';
 
 setPersistence(auth, browserLocalPersistence);
 //Sign in functionality
@@ -11,11 +12,13 @@ export const SignIn = async (email:string, password:string) => {
 
 //Sign up functionality
 export const SignUp = async (email:string, password:string,username: string) => {
- const  result = await createUserWithEmailAndPassword(auth, email, password);
- if (result.user) {
-    await updateUsername(result.user, username);
-}
- return result;
+    const  result = await createUserWithEmailAndPassword(auth, email, password);
+    if (result.user) {
+        await updateUsername(result.user, username);
+        const storage = getStorage(app);
+        const userFolderRef = ref(storage, `users/${result.user.uid}`);
+    }
+    return result;
 };
 
 //Sign out functionality
@@ -30,8 +33,25 @@ const updateUsername = async (user: User, username: string) => {
         await updateProfile(user, {
             displayName: username
         });
-        console.log('Username updated successfully');
     } catch (error) {
         console.error('Error updating username:', error);
+    }
+};
+
+
+export const uploadFileToUserFolder = async (userId: string, file: File) => {
+    // Obtenez une référence au dossier de l'utilisateur dans Firebase Storage
+    const storage = getStorage(app);
+    const userFolderRef = ref(storage, `users/${userId}`);
+
+    // Obtenez une référence au fichier que vous souhaitez télécharger
+    const fileRef = ref(userFolderRef, file.name);
+
+    try {
+        const fileData=await file.arrayBuffer();
+        await uploadBytes(fileRef, file);
+        console.log('Fichier téléchargé avec succès dans le dossier de l\'utilisateur.');
+    } catch (error) {
+        console.error('Erreur lors du téléchargement du fichier dans le dossier de l\'utilisateur:', error);
     }
 };
