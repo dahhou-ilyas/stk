@@ -35,6 +35,7 @@ function AuthProvider({ children }:  {children: React.ReactNode}) {
 
     const signUp = (email:string, password:string,username: string) => {
         setIsLoading(true);
+        console.log("jsaisjssssaij");
         SignUp(email,password,username).then(userCredential=>{
             const { user } = userCredential;
             if (user) {

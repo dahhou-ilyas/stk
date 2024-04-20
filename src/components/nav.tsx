@@ -5,16 +5,20 @@ import { useRouter } from 'next/navigation'
 import filcloud from "fichiers4u.svg"
 import Image from 'next/image'
 import { useAuth } from '@/store/auth-context'
-
 type Props = {}
 
 function NavBar({}: Props) {
   const [nav,setNav]=useState(false);
   const {user,signOut}=useAuth();
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   function onLogout(){
     signOut();
   }
+  const toggleDropdown = () => {
+    console.log("2");
+    setIsDropdownOpen(!isDropdownOpen);
+  };
   const handleResize = () => {
     if (window.innerWidth >= 768) { // Assuming 768px is your md breakpoint
         setNav(false);
@@ -39,7 +43,23 @@ function NavBar({}: Props) {
           <li className='text-lg' onClick={() => router.push('/')}><div>Home</div></li>
           {user ? (
             <>
-              <li className='text-lg' onClick={() => router.push('/userInfo')}><div>{user?.displayName}</div></li>
+              <li className='text-lg flex justify-center items-center'>
+                <div className="relative">
+                  <div onClick={toggleDropdown} className='rounded-full'>
+                    <Image className='rounded-full ' width={33} height={33} src={user.photoURL as string || '/default.jpg'} alt={'im'}/>
+                  </div>
+                  <div className={`absolute text- left-0 top-12 mt-2 w-48 bg-secondary text-secondary-content shadow-lg rounded-md z-10 transition-all duration-150 ease-out ${isDropdownOpen ? "translate-y-0 opacity-[1]" : "-translate-y-40 opacity-[0]"}`}>
+                      <ul className="menu menu-vertical">
+                          <li className='font-bold'>
+                              <div>{user.displayName}</div>
+                          </li>
+                          <li onClick={() => router.push('/userInfo')}>
+                              <div>Settings</div>
+                          </li>
+                      </ul>
+                  </div>
+                </div>
+              </li>
               <li className='text-lg' onClick={() => router.push('/uploads')}><div>My Uploads</div></li>
               <li className='text-lg' onClick={onLogout}><div>Logout</div></li>
             </>
@@ -48,6 +68,7 @@ function NavBar({}: Props) {
           )}
         </ul>
       </div>
+      
     </div>
   )
 }

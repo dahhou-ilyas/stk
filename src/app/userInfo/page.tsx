@@ -4,22 +4,23 @@ import { useAuth } from '@/store/auth-context';
 import { updateProfile, updatePassword, reauthenticateWithCredential, EmailAuthProvider, User, updateEmail } from 'firebase/auth';
 import Spinner from '@/components/spinner';
 import { toast } from 'react-hot-toast';
+import { uploadImageToFirebaseStorage } from '@/firebase/uploadsSevice';
+import { useRouter } from 'next/navigation'
+import { updateImageUrl } from '@/firebase/AuthService';
 
 function UserInfo() {
     const { user } = useAuth();
+    const router = useRouter();
     const [displayName, setDisplayName] = useState(user?.displayName || '');
-    const [photoURL, setPhotoURL] = useState(user?.photoURL || '');
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [newPasswordconf, setNewPasswordconf] = useState('');
+    const [selectedFile, setSelectedFile] = useState(null); 
 
     const handleDisplayNameChange = (e:React.ChangeEvent<HTMLInputElement>) => {
         setDisplayName(e.target.value);
     };
 
-    const handlePhotoURLChange = (e:React.ChangeEvent<HTMLInputElement>) => {
-        setPhotoURL(e.target.value);
-    };
 
     const handleCurrentPasswordChange = (e:React.ChangeEvent<HTMLInputElement>) => {
         setCurrentPassword(e.target.value);
@@ -27,6 +28,9 @@ function UserInfo() {
 
     const handleNewPasswordChange = (e:React.ChangeEvent<HTMLInputElement>) => {
         setNewPassword(e.target.value);
+    };
+    const handleFileChange = (e:any) => {
+        setSelectedFile(e.target.files[0]);
     };
 
     const handleNewPasswordChangeconf=(e:React.ChangeEvent<HTMLInputElement>) =>{
@@ -36,8 +40,18 @@ function UserInfo() {
     const handleSubmit = async (e:React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            await updateProfile(user as User, { displayName, photoURL });
 
+            if (selectedFile) {
+                const photoURL = await uploadImageToFirebaseStorage(selectedFile, user?.uid as string);
+                console.log(photoURL);
+                updateImageUrl(user as User,photoURL)
+                toast.success('upload image');
+            }
+            if(displayName){
+                await updateProfile(user as User, { displayName });
+            }
+
+        
             if(currentPassword){
                 if (newPassword && newPassword==newPasswordconf) {
                     await updatePassword(user as User, newPassword);
@@ -47,6 +61,7 @@ function UserInfo() {
             }
             
             toast.success('Profile updated successfully');
+            router.refresh()
         } catch (error) {
             console.error('Error updating profile:', error);
         }
@@ -76,15 +91,14 @@ function UserInfo() {
                     />
                 </div>
                 <div className='flex flex-row justify-center items-center'>
-                    <label htmlFor='photoURL' className='text-xl text-accent'>
-                        Photo URL :
+                    <label htmlFor='fileUpload' className='text-xl text-accent'>
+                        Select Photo :
                     </label>
                     <input
-                        type='text'
-                        id='photoURL'
-                        value={photoURL}
-                        onChange={handlePhotoURLChange}
-                        className='border border-gray-400 rounded-md p-2 ml-4'
+                        type='file'
+                        id='fileUpload'
+                        onChange={handleFileChange}
+                        className='ml-4'
                     />
                 </div>
                 <div className='flex flex-row justify-center items-center'>

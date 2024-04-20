@@ -3,9 +3,11 @@
 import { useAuth } from '@/store/auth-context'
 import React, { useState } from 'react'
 
+
 type Props = {}
 
 const UploadsPage = (props: Props) => {
+    
     const { user } = useAuth();
     const [quotaUsed, setQuotaUsed] = useState(0);
     const [quotaLimit, setQuotaLimit] = useState(150);

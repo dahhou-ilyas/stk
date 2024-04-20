@@ -13,10 +13,14 @@ export const SignIn = async (email:string, password:string) => {
 //Sign up functionality
 export const SignUp = async (email:string, password:string,username: string) => {
     const  result = await createUserWithEmailAndPassword(auth, email, password);
+    
     if (result.user) {
         await updateUsername(result.user, username);
         const storage = getStorage(app);
         const userFolderRef = ref(storage, `users/${result.user.uid}`);
+        const placeholderRef = ref(userFolderRef, 'placeholder.txt');
+        await uploadString(placeholderRef, '');
+
     }
     return result;
 };
@@ -38,20 +42,19 @@ const updateUsername = async (user: User, username: string) => {
     }
 };
 
-
-export const uploadFileToUserFolder = async (userId: string, file: File) => {
-    // Obtenez une référence au dossier de l'utilisateur dans Firebase Storage
-    const storage = getStorage(app);
-    const userFolderRef = ref(storage, `users/${userId}`);
-
-    // Obtenez une référence au fichier que vous souhaitez télécharger
-    const fileRef = ref(userFolderRef, file.name);
-
-    try {
-        const fileData=await file.arrayBuffer();
-        await uploadBytes(fileRef, file);
-        console.log('Fichier téléchargé avec succès dans le dossier de l\'utilisateur.');
-    } catch (error) {
-        console.error('Erreur lors du téléchargement du fichier dans le dossier de l\'utilisateur:', error);
+export const updateImageUrl=async (user:User,urlImage:string)=>{
+    if (!user) {
+        throw new Error("Utilisateur non trouvé.");
     }
-};
+    try {
+      await updateProfile(user, {
+        photoURL: urlImage,
+      });
+      console.log("Image de profil mise à jour avec succès.");
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour de l'image de profil :", error);
+      throw error;
+    }
+}
+
+
