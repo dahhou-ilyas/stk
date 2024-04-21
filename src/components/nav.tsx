@@ -43,12 +43,13 @@ function NavBar({}: Props) {
           <li className='text-lg' onClick={() => router.push('/')}><div>Home</div></li>
           {user ? (
             <>
+              <li className='text-lg' onClick={() => router.push('/uploads')}><div>My Uploads</div></li>
               <li className='text-lg flex justify-center items-center'>
                 <div className="relative">
                   <div onClick={toggleDropdown} className='rounded-full'>
                     <Image className='rounded-full ' width={33} height={33} src={user.photoURL as string || '/default.jpg'} alt={'im'}/>
                   </div>
-                  <div className={`absolute text- left-0 top-12 mt-2 w-48 bg-secondary text-secondary-content shadow-lg rounded-md z-10 transition-all duration-150 ease-out ${isDropdownOpen ? "translate-y-0 opacity-[1]" : "-translate-y-40 opacity-[0]"}`}>
+                  <div className={`absolute text- right-0 top-12 mt-2 w-48 bg-secondary text-secondary-content shadow-lg rounded-md z-10 transition-all duration-150 ease-out ${isDropdownOpen ? "translate-y-0 opacity-[1]" : "-translate-y-40 opacity-[0]"}`}>
                       <ul className="menu menu-vertical">
                           <li className='font-bold'>
                               <div>{user.displayName}</div>
@@ -60,8 +61,7 @@ function NavBar({}: Props) {
                   </div>
                 </div>
               </li>
-              <li className='text-lg' onClick={() => router.push('/uploads')}><div>My Uploads</div></li>
-              <li className='text-lg' onClick={onLogout}><div>Logout</div></li>
+              <li className='flex justify-center items-center' onClick={onLogout}><div><Image width={20} height={20} src={"/logout.svg"} alt={'im'}/></div></li>
             </>
           ) : (
             <li className='text-lg' onClick={() => router.push('/signup')}><div>Sign up</div></li>

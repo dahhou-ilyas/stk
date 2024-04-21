@@ -1,6 +1,7 @@
 import { getDownloadURL, getStorage, ref, uploadBytes, uploadBytesResumable } from "firebase/storage";
 
-import app from "./firebase";
+import app,{Firestore} from "./firebase";
+import { doc, getDoc } from "firebase/firestore";
 
 export const uploadFileToUserFolder = async (userId: string, file: File) => {
     // Obtenez une référence au dossier de l'utilisateur dans Firebase Storage

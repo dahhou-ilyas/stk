@@ -1,8 +1,9 @@
 "use client"
 
+import { uploadFileToUserFolder } from '@/firebase/uploadsSevice'
 import { useAuth } from '@/store/auth-context'
 import React, { useState } from 'react'
-
+import { toast } from 'react-hot-toast';
 
 type Props = {}
 
@@ -10,27 +11,38 @@ const UploadsPage = (props: Props) => {
     
     const { user } = useAuth();
     const [quotaUsed, setQuotaUsed] = useState(0);
+    const [isupload,setIsupload]=useState<boolean>(false);
     const [quotaLimit, setQuotaLimit] = useState(150);
-    const [file,setFile]=useState<FileList>()
+    const [file,setFile]=useState<FileList | null>()
     const remainingQuota = quotaLimit - quotaUsed;
     const progressBarWidth = Math.round(((remainingQuota / quotaLimit) * 100));
 
     const handleFileUpload = () => {
-        console.log(file);
+        if(file){
+            setIsupload(true);
+            uploadFileToUserFolder(user?.uid as string,file[0]).then(data=>{
+                toast.success("your file is succefily uploaded");
+                setIsupload(false);
+                setFile(null);
+            }).catch(err=>{
+                toast.error("your file not uploads")
+                console.log(err);
+            })
+        }else{
+            toast("you should have something to upload")
+        }
     };
 
     const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
         const files = e.dataTransfer.files;
         setFile(files);
-        console.log(file);
     };
 
     const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
         if (files) {
             setFile(files);
-            console.log(files[0]);
         }
     };
 
@@ -81,7 +93,7 @@ const UploadsPage = (props: Props) => {
                         className="hidden" 
                         onChange={handleFileInput} 
                     />
-                    {file && <button className='text-neutral hover:bg-neutral-content p-2 rounded-md' onClick={handleFileUpload}>Upload</button>}
+                    {file && <button disabled={isupload} className='text-neutral hover:bg-neutral-content p-2 rounded-md' onClick={handleFileUpload}>Upload</button>}
                 </label>
             </div>
         </div>
