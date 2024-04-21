@@ -1,4 +1,5 @@
 import SideBare from "@/components/sidebare";
+import { UploadsProvider } from "@/store/uploadsContext";
 
 export default function RootLayout({
     children,
@@ -7,8 +8,10 @@ export default function RootLayout({
   }>) {
     return (
       <div className="w-[100%] h-[90vh] flex flex-row">
-        <SideBare/>
-        {children}
+        <UploadsProvider>
+          <SideBare/>
+          {children}
+        </UploadsProvider>
       </div>
     );
   }

@@ -2,6 +2,7 @@
 
 import { uploadFileToUserFolder } from '@/firebase/uploadsSevice'
 import { useAuth } from '@/store/auth-context'
+import { useQuota } from '@/store/uploadsContext';
 import React, { useState } from 'react'
 import { toast } from 'react-hot-toast';
 
@@ -10,7 +11,7 @@ type Props = {}
 const UploadsPage = (props: Props) => {
     
     const { user } = useAuth();
-    const [quotaUsed, setQuotaUsed] = useState(0);
+    const { quotaUsed, setQuotaUsed } = useQuota();
     const [isupload,setIsupload]=useState<boolean>(false);
     const [quotaLimit, setQuotaLimit] = useState(150);
     const [file,setFile]=useState<FileList | null>()

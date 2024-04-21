@@ -1,4 +1,4 @@
-import { getDownloadURL, getStorage, ref, uploadBytes, uploadBytesResumable } from "firebase/storage";
+import { getDownloadURL, getMetadata, getStorage, listAll, ref, uploadBytes, uploadBytesResumable } from "firebase/storage";
 
 import app,{Firestore} from "./firebase";
 import { doc, getDoc } from "firebase/firestore";
@@ -19,6 +19,46 @@ export const uploadFileToUserFolder = async (userId: string, file: File) => {
         console.error('Erreur lors du téléchargement du fichier dans le dossier de l\'utilisateur:', error);
     }
 };
+
+export const getFileListForUser = async (userId:string) =>{
+    try {
+        const storage = getStorage(); // Obtenir l'instance Firebase Storage
+        const userFolderRef = ref(storage, `users/${userId}/`); // Dossier de l'utilisateur
+    
+        // Liste tous les fichiers dans le dossier
+        const listResult = await listAll(userFolderRef);
+    
+        const filePromises = listResult.items.map((itemRef) =>
+            getMetadata(itemRef).then((metadata) =>
+              getDownloadURL(itemRef).then((url) => ({
+                name: itemRef.name,
+                url,
+                ref: itemRef,
+                size: metadata.size, // Taille du fichier en bytes
+              }))
+            )
+        );
+    
+        const fileList = await Promise.all(filePromises);
+        
+        // Calculer la taille totale en bytes
+        const totalSizeInBytes = fileList.reduce((total, file) => total + file.size, 0);
+
+        // Convertir la taille totale en mégaoctets
+        const totalSizeInMB = totalSizeInBytes / (1024 * 1024);
+
+        return {
+            fileList,
+            totalSizeInMB, // Retourne également la taille totale en mégaoctets
+        };
+
+
+      } catch (error) {
+        console.error('Erreur lors de la récupération des fichiers:', error);
+        throw error; // Relancer l'erreur pour que l'appelant puisse la traiter
+      }
+}
+
 
 export async function uploadImageToFirebaseStorage(file:File,userId:string){
     try {

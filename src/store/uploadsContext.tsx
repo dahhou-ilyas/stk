@@ -1,3 +1,4 @@
+"use client"
 import React, { useContext, useState, createContext, Dispatch, SetStateAction, ReactNode } from 'react'
 
 
@@ -12,7 +13,7 @@ interface QuotaContextType {
 
 const QuotaContext = createContext<QuotaContextType | null>(null);
 
-export function UploadsContext({children}: QuotaProviderProps) {
+export function UploadsProvider({children}: QuotaProviderProps) {
     const [quotaUsed, setQuotaUsed] = useState(0);
     return (
       <QuotaContext.Provider value={{ quotaUsed, setQuotaUsed }}>
