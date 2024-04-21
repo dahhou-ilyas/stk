@@ -1,13 +1,31 @@
-import React, { useContext, useEffect, useState, createContext } from 'react'
+import React, { useContext, useState, createContext, Dispatch, SetStateAction, ReactNode } from 'react'
 
 
-type Props = {}
-
-
-function UploadsContext({}: Props) {
-  return (
-    <div>UploadsContext</div>
-  )
+interface QuotaProviderProps {
+    children: ReactNode;
 }
 
-export default UploadsContext
+interface QuotaContextType {
+    quotaUsed: number;
+    setQuotaUsed: Dispatch<SetStateAction<number>>;
+}
+
+const QuotaContext = createContext<QuotaContextType | null>(null);
+
+export function UploadsContext({children}: QuotaProviderProps) {
+    const [quotaUsed, setQuotaUsed] = useState(0);
+    return (
+      <QuotaContext.Provider value={{ quotaUsed, setQuotaUsed }}>
+        {children}
+      </QuotaContext.Provider>
+    );
+}
+
+
+export const useQuota = (): QuotaContextType => {
+    const context = useContext(QuotaContext);
+    if (!context) {
+      throw new Error('useQuota doit être utilisé dans QuotaProvider');
+    }
+    return context;
+};
