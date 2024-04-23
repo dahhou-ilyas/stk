@@ -25,6 +25,8 @@ const UploadsPage = (props: Props) => {
                 toast.success("your file is succefily uploaded");
                 setIsupload(false);
                 setFile(null);
+                const size=(file[0].size)/ (1024 * 1024)
+                setQuotaUsed(prev=>prev+size);  
             }).catch(err=>{
                 toast.error("your file not uploads")
                 console.log(err);
@@ -42,7 +44,7 @@ const UploadsPage = (props: Props) => {
 
     const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
-        if (files) {
+        if (files != null) {
             setFile(files);
         }
     };
@@ -53,7 +55,7 @@ const UploadsPage = (props: Props) => {
 
             <div className='flex justify-center my-9 items-center flex-col w-full'>
                 <div className="radial-progress bg-primary text-primary-content border-4 border-primary" style={{"--value":100-progressBarWidth}} role="progressbar">{100-progressBarWidth}%</div>
-                <span className="mt-3">{remainingQuota} MB / {quotaLimit} MB</span>
+                <span className="mt-3">{remainingQuota.toFixed(2)} MB / {quotaLimit} MB</span>
             </div>
 
             <div 
