@@ -1,4 +1,5 @@
 "use client"
+import { StorageReference } from 'firebase/storage';
 import React, { useContext, useState, createContext, Dispatch, SetStateAction, ReactNode } from 'react'
 
 
@@ -6,17 +7,28 @@ interface QuotaProviderProps {
     children: ReactNode;
 }
 
+interface customFile{
+  name: string;
+  url: string;
+  ref: StorageReference;
+  size: number;
+}
+
+
 interface QuotaContextType {
     quotaUsed: number;
     setQuotaUsed: Dispatch<SetStateAction<number>>;
+    fileData:customFile[],
+    setFileData:Dispatch<SetStateAction<customFile[]>>;
 }
 
 const QuotaContext = createContext<QuotaContextType | null>(null);
 
 export function UploadsProvider({children}: QuotaProviderProps) {
     const [quotaUsed, setQuotaUsed] = useState(0);
+    const [fileData, setFileData] = useState<customFile[]>([]);
     return (
-      <QuotaContext.Provider value={{ quotaUsed, setQuotaUsed }}>
+      <QuotaContext.Provider value={{ quotaUsed, setQuotaUsed,setFileData,fileData}}>
         {children}
       </QuotaContext.Provider>
     );

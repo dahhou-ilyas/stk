@@ -2,20 +2,12 @@
 import {getFileListForUser} from '@/firebase/uploadsSevice'
 import { useAuth } from '@/store/auth-context'
 import { useQuota } from '@/store/uploadsContext'
-import { StorageReference } from 'firebase/storage'
 import React, { useEffect, useState } from 'react'
 import CardFile from './CardFile'
 
-interface customFile{
-    name: string;
-    url: string;
-    ref: StorageReference;
-    size: number;
-}
 
 function SideBare() {
-  const {quotaUsed,setQuotaUsed}=useQuota();
-  const [fileData, setFileData] = useState<customFile[]>([]);
+  const {quotaUsed,setQuotaUsed,fileData,setFileData}=useQuota();
   const [loading, setLoading] = useState(false);
   const {user}=useAuth();
   useEffect(()=>{

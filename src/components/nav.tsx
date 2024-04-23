@@ -1,8 +1,6 @@
 'use client'
-import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import filcloud from "fichiers4u.svg"
 import Image from 'next/image'
 import { useAuth } from '@/store/auth-context'
 type Props = {}
