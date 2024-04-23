@@ -16,7 +16,6 @@ function NavBar({}: Props) {
     signOut();
   }
   const toggleDropdown = () => {
-    console.log("2");
     setIsDropdownOpen(!isDropdownOpen);
   };
   const handleResize = () => {

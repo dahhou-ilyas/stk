@@ -4,6 +4,7 @@ import { useAuth } from '@/store/auth-context'
 import { useQuota } from '@/store/uploadsContext'
 import { StorageReference } from 'firebase/storage'
 import React, { useEffect, useState } from 'react'
+import CardFile from './CardFile'
 
 interface customFile{
     name: string;
@@ -15,9 +16,10 @@ interface customFile{
 function SideBare() {
   const {quotaUsed,setQuotaUsed}=useQuota();
   const [fileData, setFileData] = useState<customFile[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const {user}=useAuth();
   useEffect(()=>{
+    setLoading(true)
     const fetchData=async ()=>{
       try{
         const {fileList,totalSizeInMB}=await getFileListForUser(user?.uid as string);
@@ -33,12 +35,15 @@ function SideBare() {
     } 
   },[user])
 
-  if (loading) {
-    return <p>Chargement...</p>;
-  }
-
   return (
-    <div className='max-md:w-[40%] min-w-[20%] bg-white/10'>sss</div>
+    <div className='max-md:w-[40%] min-w-[20%] bg-white/10'>
+      { loading ?
+        <p>Chargement...</p>:
+        fileData.map((data,index)=>{
+          return <CardFile key={index} name={data.name}/>
+        })
+      }
+    </div>
   )
 }
 
