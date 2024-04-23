@@ -12,9 +12,16 @@ export const uploadFileToUserFolder = async (userId: string, file: File) => {
     const fileRef = ref(userFolderRef, file.name);
 
     try {
-        const fileData=await file.arrayBuffer();
         await uploadBytes(fileRef, file);
+        const metadata = await getMetadata(fileRef);
+        const url = await getDownloadURL(fileRef);
         console.log('Fichier téléchargé avec succès dans le dossier de l\'utilisateur.');
+        return {
+            name: fileRef.name,
+            url,
+            ref: fileRef,
+            size: metadata.size,
+        };
     } catch (error) {
         console.error('Erreur lors du téléchargement du fichier dans le dossier de l\'utilisateur:', error);
     }
