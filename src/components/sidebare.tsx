@@ -32,7 +32,7 @@ function SideBare() {
       { loading ?
         <p>Chargement...</p>:
         fileData.map((data,index)=>{
-          return <CardFile key={index} name={data.name}/>
+          return <CardFile key={index} data={data}/>
         })
       }
     </div>
