@@ -21,10 +21,12 @@ function UploadsComponent({}: Props) {
         if(file){
             setIsupload(true);
             uploadFileToUserFolder(user?.uid as string,file[0]).then(data=>{
-                console.log(data);
                 toast.success("your file is succefily uploaded");
                 setIsupload(false);
                 setFile(null);
+                if(data!=undefined){
+                    setFileData(prev=>[data,...prev])
+                }
                 const size=(file[0].size)/ (1024 * 1024)
                 setQuotaUsed(prev=>prev+size); 
                 
