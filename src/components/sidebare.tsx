@@ -10,6 +10,7 @@ function SideBare() {
   const {quotaUsed,setQuotaUsed,fileData,setFileData}=useQuota();
   const [loading, setLoading] = useState(false);
   const {user}=useAuth();
+  
   useEffect(()=>{
     setLoading(true)
     const fetchData=async ()=>{

@@ -1,4 +1,4 @@
-import { getDownloadURL, getMetadata, getStorage, listAll, ref, uploadBytes, uploadBytesResumable } from "firebase/storage";
+import { deleteObject, getDownloadURL, getMetadata, getStorage, listAll, ref, uploadBytes, uploadBytesResumable } from "firebase/storage";
 
 import app,{Firestore} from "./firebase";
 import { doc, getDoc } from "firebase/firestore";
@@ -92,4 +92,17 @@ export async function uploadImageToFirebaseStorage(file:File,userId:string){
         console.error('Error uploading image to Firebase Storage:', error);
         throw error; 
     }
+}
+
+export function deleteFromFirebase(filePath:string){
+    const storage=getStorage(app);
+
+    const fileRef=ref(storage,filePath);
+    return deleteObject(fileRef).then(()=>{
+        console.log("Fichier supprimé avec succès");
+        return true
+    }).catch((error)=>{
+        console.error("Erreur lors de la suppression du fichier :", error);
+        throw error;
+    })
 }
