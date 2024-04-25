@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/store/auth-context';
 import { updateProfile, updatePassword, reauthenticateWithCredential, EmailAuthProvider, User, updateEmail } from 'firebase/auth';
 import Spinner from '@/components/spinner';
@@ -16,6 +16,12 @@ function UserInfo() {
     const [newPassword, setNewPassword] = useState('');
     const [newPasswordconf, setNewPasswordconf] = useState('');
     const [selectedFile, setSelectedFile] = useState(null); 
+
+    useEffect(()=>{
+        if(!user){
+            router.push("/signup")
+        }
+    },[user])
 
     const handleDisplayNameChange = (e:React.ChangeEvent<HTMLInputElement>) => {
         setDisplayName(e.target.value);
