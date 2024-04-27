@@ -2,13 +2,14 @@
 
 import Login from '@/components/Login'
 import Registre from '@/components/registre'
+import { useAuth } from '@/store/auth-context'
 import React, { useState } from 'react'
 
 type Props = {}
 
 const LoginPage = (props: Props) => {
 
-  const [isLogin,setIsLogin]=useState(true);
+  const {isLogin,setIsLogin}=useAuth();
   
   return (
     <>

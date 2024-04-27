@@ -12,11 +12,11 @@ const UploadsPage = (props: Props) => {
     const router=useRouter()
     const {isCardClicked,setSpecificCardData}=useQuota();
     const {user}=useAuth();
-    useEffect(()=>{
-        if(!user){
-            router.push("/signup")
-        }
-    },[user])
+    // useEffect(()=>{
+    //     if(!user){
+    //         router.push("/signup")
+    //     }
+    // },[user])
     return (
         <div className='w-[100%]'>
             {

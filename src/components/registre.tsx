@@ -40,7 +40,7 @@ function Registre({setIsLogin}: Props) {
         loading ? (
             <Spiner/>
         ):(
-            <div className='bg-secondary-content w-[60%] max-w-[70%] h-[80%] flex m-auto mt-10 rounded-lg max-md:bg-black max-lg:w-[80%] overflow-hidden'>
+            <div className='bg-secondary-content w-[60%] max-w-[70%] h-[70%] flex m-auto mt-10 rounded-lg max-md:bg-black max-lg:w-[80%] overflow-hidden'>
             <div className='w-[60%] flex flex-col max-md:w-[100%]'>
                 <h1 className='text-3xl text-center my-4 text-secondary font-bold'>Sign Up</h1>
                 <form onSubmit={signUpHandle} className='h-[90%] flex flex-col w-[90%] m-auto justify-center gap-y-2 -mt-12'>

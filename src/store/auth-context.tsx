@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { Dispatch, SetStateAction, useContext, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { auth } from "@/firebase/firebase";
 import { createContext } from 'react';
@@ -14,14 +14,19 @@ export  interface  IAuth {
     signIn: (email:string, password:string,onSuccess: () =>  void) =>  void;
     signUp: (email:string, password:string,username:string) =>  void;
     signOut: () =>  void;
+    isLogin:boolean,
+    setIsLogin:Dispatch<SetStateAction<boolean>>;
+    
 }
 
 export const AuthContext = createContext<IAuth>({
     user: auth.currentUser,
     loading: false,
+    isLogin:true,
     signIn: () => {},
     signUp: () => {},
-    signOut: () => {}
+    signOut: () => {},
+    setIsLogin:()=>{}
 });
 
 export  const  useAuth  = () =>  useContext(AuthContext);
@@ -32,6 +37,8 @@ function AuthProvider({ children }:  {children: React.ReactNode}) {
     const [currentUser,  setCurrentUser] =  useState<User  |  null>(null);
     const [isLoading,  setIsLoading] =  useState<boolean>(false);
     const [isAuthLoading,  setIsAuthLoading] =  useState<boolean>(true);
+
+    const [isLogin,setIsLogin]=useState(true);
 
     const signUp = (email:string, password:string,username: string) => {
         setIsLoading(true);
@@ -90,9 +97,12 @@ function AuthProvider({ children }:  {children: React.ReactNode}) {
     const authValues: IAuth = {
         user: currentUser,
         loading: isLoading,
+        isLogin,
         signIn,
         signUp,
-        signOut
+        signOut,
+        setIsLogin
+        
     }
 
     useEffect(() => {
