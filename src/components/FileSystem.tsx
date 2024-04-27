@@ -1,4 +1,5 @@
-import { Folder } from '@/utils/folderStructure';
+import { Folder, addFolder, deleteFolder } from '@/utils/folderStructure';
+import Image from 'next/image';
 import { useState } from 'react';
 import { FaFolder, FaPlus, FaTrash } from 'react-icons/fa';
 import { v4 as uuidv4 } from 'uuid';
@@ -35,14 +36,18 @@ const FileSystem: React.FC<FileSystemProps> = ({ initialFolders }) => {
       <ul>
         {folders.map((folder) => (
           <li key={folder.id} style={{ marginLeft: `${depth * 20}px` }}>
-            <div className='flex flex-row gap-x-2'>
-              <FaFolder /> {folder.name}
-              <button onClick={() => addFolderToFolder(folder.id)}>
-                <FaPlus />
-              </button>
-              <button onClick={() => deleteFolderById(folder.id)}>
-                <FaTrash />
-              </button>
+            <div className='flex flex-row gap-x-2 justify-between'>
+                <div className='flex gap-x-2 justify-center items-center'>
+                    <FaFolder /> {folder.name}
+                </div>
+                <div className='flex gap-x-3 justify-center items-center'>
+                  <button onClick={() => addFolderToFolder(folder.id)}>
+                    <FaPlus />
+                  </button>
+                  <button onClick={() => deleteFolderById(folder.id)}>
+                    <FaTrash />
+                  </button>
+                </div>
             </div>
             {folder.children.length > 0 && renderFolders(folder.children, depth + 1)}
           </li>
@@ -54,11 +59,10 @@ const FileSystem: React.FC<FileSystemProps> = ({ initialFolders }) => {
   return (
     <div>
       <button 
-        className='flex justify-center items-center gap-x-2 my-2' 
+        className='flex justify-end items-end gap-x-2 my-2' 
         onClick={() => addFolderToFolder(null)}
       >
-        <FaPlus className='ml-2' />
-        <p>Créer un dossier</p>
+        <Image src={"/addFolder.png"} width={25} height={25} alt='addF'/>
       </button>
       {renderFolders(folders)}
     </div>
@@ -67,29 +71,3 @@ const FileSystem: React.FC<FileSystemProps> = ({ initialFolders }) => {
 
 export default FileSystem;
 
-// Functions for folder operations
-const addFolder = (folders: Folder[], parentId: string | null, newFolder: Folder): Folder[] => {
-  if (parentId === null) {
-    return [...folders, newFolder]; // Ajout à la racine
-  }
-
-  return folders.map((folder) => {
-    let newChildren = folder.children.slice(); // Copie du tableau des enfants
-    if (folder.id === parentId) {
-      newChildren.push(newFolder); // Ajout au bon endroit
-    } else {
-      newChildren = addFolder(newChildren, parentId, newFolder); // Appel récursif
-    }
-    return { ...folder, children: newChildren }; // Retourner un nouveau dossier
-  });
-};
-
-const deleteFolder = (folders: Folder[], folderId: string): Folder[] => {
-  return folders.filter((folder) => {
-    if (folder.id === folderId) {
-      return false; // Supprimer ce dossier
-    }
-    folder.children = deleteFolder([...folder.children], folderId); // Supprimer de façon récursive
-    return true; // Conserver les autres dossiers
-  });
-};
