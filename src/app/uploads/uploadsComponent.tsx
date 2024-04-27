@@ -88,8 +88,8 @@ function UploadsComponent({}: Props) {
                     <p className="mb-2 text-sm text-neutral dark:text-neutral">
                         <span className="font-semibold">Click to upload</span> or drag and drop
                     </p>
-                    {file ? (<p className='pt-3 text-xs text-neutral dark:text-neutral'>{file[0].name}</p>):(<p className="text-xs text-neutral dark:text-neutral">
-                        SVG, PNG, JPG or GIF (MAX. 800x400px)
+                    {file ? (<p className='pt-3 text-x text-center text-neutral dark:text-neutral'>{file[0].name}</p>):(<p className="text-xs text-neutral text-center dark:text-neutral">
+                        Anything to uploads
                     </p>)}
                 </div>
                 <input 

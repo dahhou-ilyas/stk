@@ -15,6 +15,7 @@ function NavBar() {
   };
 
   const toggleDropdown = () => {
+    console.log("object");
     setIsDropdownOpen(!isDropdownOpen);
   };
 
@@ -114,8 +115,8 @@ function NavBar() {
                   My Uploads
                 </li>
                 <li className="text-lg flex justify-center items-center">
-                  <div className="relative">
-                    <div onClick={toggleDropdown} className="rounded-full">
+                  <div className="relative" >
+                    <div className="rounded-full" onClick={toggleDropdown} >
                       <Image
                         className="rounded-full"
                         width={33}

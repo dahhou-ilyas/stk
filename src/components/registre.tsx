@@ -15,7 +15,7 @@ function Registre({setIsLogin}: Props) {
     const [email,setEmail]=useState<string>("");
     const [password,setPassword]=useState<string>("");
     const [passwordConf,setPasswordConf]=useState<string>("");
-    const {signUp,loading,user}=useAuth();
+    const {signUp,loading,user,signInWithGoogle}=useAuth();
 
     function signUpHandle(e:React.SyntheticEvent){
         e.preventDefault();
@@ -55,8 +55,8 @@ function Registre({setIsLogin}: Props) {
                     <button className='text-secondary border border-secondary py-2 w-[50%] mx-auto mt-5'>Create</button>
                 </form>
                 <div className='flex flex-row gap-x-12 m-auto relative bottom-8'>
-                    <Image alt='' src="/facbook.svg" height={38} width={38} />
-                    <Image alt='' src="/googl.svg" height={38} width={38} />
+                    <Image  alt='' src="/facbook.svg" height={38} width={38} />
+                    <Image onClick={signInWithGoogle} alt='' src="/googl.svg" height={38} width={38} />
                 </div>
             </div>
             <div className='bg-secondary w-[40%] max-md:hidden raidus1 flex flex-col gap-y-5 justify-center items-center text-secondary-content'>

@@ -1,4 +1,4 @@
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, setPersistence, browserLocalPersistence, User, updateProfile } from 'firebase/auth';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, setPersistence, browserLocalPersistence, User, updateProfile, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { auth } from './firebase';
 import { getStorage, ref, uploadBytes, uploadString } from 'firebase/storage';
 import app from './firebase';
@@ -57,4 +57,14 @@ export const updateImageUrl=async (user:User,urlImage:string)=>{
     }
 }
 
+
+export const SignInWithGoogle = async () =>{
+    const provider =new GoogleAuthProvider();
+    try {
+        const result =await signInWithPopup(auth,provider)
+        console.log("auth with google pass bien");
+    } catch (error) {
+        console.error("il ya une erreur avec google auth "+error);
+    }
+}
 

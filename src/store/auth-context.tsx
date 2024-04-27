@@ -4,7 +4,7 @@ import { auth } from "@/firebase/firebase";
 import { createContext } from 'react';
 
 import { User, onAuthStateChanged } from 'firebase/auth'; //type User import
-import { SignUp,SignOut,SignIn } from '@/firebase/AuthService';
+import { SignUp,SignOut,SignIn,SignInWithGoogle } from '@/firebase/AuthService';
 import { toast } from 'react-hot-toast';
 
 //IAuth context
@@ -14,6 +14,7 @@ export  interface  IAuth {
     signIn: (email:string, password:string,onSuccess: () =>  void) =>  void;
     signUp: (email:string, password:string,username:string) =>  void;
     signOut: () =>  void;
+    signInWithGoogle:()=>void;
     isLogin:boolean,
     setIsLogin:Dispatch<SetStateAction<boolean>>;
     
@@ -26,7 +27,8 @@ export const AuthContext = createContext<IAuth>({
     signIn: () => {},
     signUp: () => {},
     signOut: () => {},
-    setIsLogin:()=>{}
+    setIsLogin:()=>{},
+    signInWithGoogle:()=>{},
 });
 
 export  const  useAuth  = () =>  useContext(AuthContext);
@@ -93,6 +95,20 @@ function AuthProvider({ children }:  {children: React.ReactNode}) {
             setIsLoading(false);
         }
     }
+    const signInWithGoogle = async () =>{
+        setIsLoading(true)
+        try {
+            await SignInWithGoogle();
+            setIsLoading(false);
+            toast("signup wxith google are succes");
+            router.push("/uploads")
+        } catch (error) {
+            toast("error when authenticating with google")
+        }
+    }
+
+
+    
 
     const authValues: IAuth = {
         user: currentUser,
@@ -101,7 +117,8 @@ function AuthProvider({ children }:  {children: React.ReactNode}) {
         signIn,
         signUp,
         signOut,
-        setIsLogin
+        setIsLogin,
+        signInWithGoogle
         
     }
 
