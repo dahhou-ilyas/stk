@@ -40,7 +40,7 @@ const FileSystem: React.FC<FileSystemProps> = ({ initialFolders }) => {
                 <div className='flex gap-x-2 justify-center items-center'>
                     <FaFolder /> {folder.name}
                 </div>
-                <div className='flex gap-x-3 justify-center items-center'>
+                <div className='flex gap-x-2 justify-center items-center'>
                   <button onClick={() => addFolderToFolder(folder.id)}>
                     <FaPlus />
                   </button>

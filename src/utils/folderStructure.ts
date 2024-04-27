@@ -5,29 +5,28 @@ export interface Folder {
     children: Folder[];
   }
   
-export const initialFolderStructure: Folder[] = [
-  {
-    id: 'root',
-    name: 'Racine',
-    parentId: null,
-    children: [
-    ],
-  },
-];
+export const initialFolderStructure: Folder[] = [];
 
 // Functions for folder operations
 export const addFolder = (folders: Folder[], parentId: string | null, newFolder: Folder): Folder[] => {
   if (parentId === null) {
     return [...folders, newFolder]; // Ajout à la racine
   }
-
+  let i=0;
+  let b=0
   return folders.map((folder) => {
-    let newChildren = folder.children.slice(); // Copie du tableau des enfants
+    let newChildren = folder.children.slice();
+    
     if (folder.id === parentId) {
+      b=b+1
+      console.log("b="+b);
       newChildren.push(newFolder); // Ajout au bon endroit
     } else {
-      newChildren = addFolder(newChildren, parentId, newFolder); // Appel récursif
+      i=i+1
+      newChildren = addFolder(newChildren, parentId, newFolder);
+      console.log(newChildren,"i="+i); // Appel récursif
     }
+    
     return { ...folder, children: newChildren }; // Retourner un nouveau dossier
   });
 };
