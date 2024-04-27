@@ -100,9 +100,13 @@ function AuthProvider({ children }:  {children: React.ReactNode}) {
         try {
             await SignInWithGoogle();
             setIsLoading(false);
-            toast("signup wxith google are succes");
-            router.push("/uploads")
+            if(currentUser){
+                toast("signup wxith google are succes");
+                router.push("/uploads")
+            }
+            
         } catch (error) {
+            setIsLoading(false);
             toast("error when authenticating with google")
         }
     }

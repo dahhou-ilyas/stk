@@ -144,7 +144,7 @@ function NavBar() {
                 </div>
               </>
             ) : (
-              <li className="text-lg" onClick={() => router.push('/signup')}>
+              <li className="text-lg hover:bg-white/20 hover:rounded-lg hover:p-1 transition-all delay-75 cursor-pointer" onClick={() => router.push('/signup')}>
                 Sign up
               </li>
             )}
