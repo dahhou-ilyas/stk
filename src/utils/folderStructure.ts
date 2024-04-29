@@ -12,21 +12,14 @@ export const addFolder = (folders: Folder[], parentId: string | null, newFolder:
   if (parentId === null) {
     return [...folders, newFolder]; // Ajout à la racine
   }
-  let i=0;
-  let b=0
   return folders.map((folder) => {
     let newChildren = folder.children.slice();
     
     if (folder.id === parentId) {
-      b=b+1
-      console.log("b="+b);
       newChildren.push(newFolder); // Ajout au bon endroit
     } else {
-      i=i+1
-      newChildren = addFolder(newChildren, parentId, newFolder);
-      console.log(newChildren,"i="+i); // Appel récursif
-    }
-    
+      newChildren = addFolder(newChildren, parentId, newFolder); // Appel récursif
+    } 
     return { ...folder, children: newChildren }; // Retourner un nouveau dossier
   });
 };

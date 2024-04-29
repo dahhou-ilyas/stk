@@ -106,3 +106,16 @@ export function deleteFromFirebase(filePath:string){
         throw error;
     })
 }
+
+export const createFOlderInFirebaseStorage=async (userId:string,folderPath:string)=>{
+    try {
+        const storage=getStorage(app);
+        const folderRef=ref(storage, `users/${userId}/${folderPath}/.folderIndicator`);
+        const emptyFile=new Blob(['']);
+        await uploadBytes(folderRef,emptyFile);
+        console.log("folder crée avec succes");
+    } catch (error) {
+        console.error('erruer lors de la création de folder dans firebase storage');
+        throw error;
+    }
+}
