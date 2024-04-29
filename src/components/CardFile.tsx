@@ -1,5 +1,6 @@
-import { deleteFromFirebase } from '@/firebase/uploadsSevice'
+import { deleteFromFirebase, generateShareLink } from '@/firebase/uploadsSevice'
 import { customFile, useQuota } from '@/store/uploadsContext'
+import { copyToClipboard } from '@/utils/clickCopy'
 import { getIconForFileType } from '@/utils/geticons'
 import Image from 'next/image'
 import React from 'react'
@@ -30,10 +31,24 @@ function CardFile({data}: Props) {
     setSpecificCardData(data)
   }
 
+  async function handleShare(){
+    const shareLink=await generateShareLink(data.ref.fullPath);
+    const succes=await copyToClipboard(shareLink);
+
+    if(succes){
+      toast.success('link for share has copied')
+    }else{
+      toast.error("Unable to copy link.");
+    }
+  }
+
   return (
-    <div className='w-full border border-accent/30 rounded-md bg-ac flex flex-row items-center justify-between px-1 cursor-pointer' onClick={handleClick}>
-        <p className='font-sans overflow-hidden'>{getIconForFileType(data.name)}  {data.name.split('.')[0]}</p>
-        <Image onClick={handleDelete} className='cursor-pointer' alt='X' src={'/delet.svg'} width={18} height={18}/>
+    <div className='w-full border border-accent/30 rounded-md bg-ac flex flex-row items-center justify-between px-1'>
+        <p onClick={handleClick} className='cursor-pointer font-sans overflow-hidden'>{getIconForFileType(data.name)}  {data.name.split('.')[0]}</p>
+        <div className='flex flex-row gap-x-3'>
+          <Image onClick={handleShare} className='cursor-pointer' alt='X' src={'/share.png'} width={20} height={20}/>
+          <Image onClick={handleDelete} className='cursor-pointer' alt='X' src={'/delet.svg'} width={20} height={20}/>
+        </div>
     </div>
   )
 }

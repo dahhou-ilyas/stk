@@ -2,6 +2,7 @@ import { deleteObject, getDownloadURL, getMetadata, getStorage, listAll, ref, up
 
 import app,{Firestore} from "./firebase";
 import { doc, getDoc } from "firebase/firestore";
+import { customFile } from "@/store/uploadsContext";
 
 export const uploadFileToUserFolder = async (userId: string, file: File,pathFolder:string) => {
     // Obtenez une référence au dossier de l'utilisateur dans Firebase Storage
@@ -119,3 +120,16 @@ export const createFOlderInFirebaseStorage=async (userId:string,folderPath:strin
         throw error;
     }
 }
+
+export const generateShareLink = async (filePath:string) => {
+    try {
+      const storage = getStorage(app);
+      const fileRef = ref(storage, filePath);
+      const downloadURL = await getDownloadURL(fileRef);
+  
+      return downloadURL; // URL de partage du fichier
+    } catch (error) {
+      console.error('Erreur lors de la génération du lien de partage :', error);
+      throw error;
+    }
+};
