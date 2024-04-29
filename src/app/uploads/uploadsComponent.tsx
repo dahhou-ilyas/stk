@@ -10,7 +10,7 @@ type Props = {}
 
 function UploadsComponent({}: Props) {
     const { user } = useAuth();
-    const { quotaUsed, setQuotaUsed,setFileData } = useQuota();
+    const { pathFolder,quotaUsed, setQuotaUsed,setFileData } = useQuota();
     const [isupload,setIsupload]=useState<boolean>(false);
     const [quotaLimit, setQuotaLimit] = useState(150);
     const [file,setFile]=useState<FileList | null>()
@@ -58,6 +58,10 @@ function UploadsComponent({}: Props) {
         <div className='flex justify-center my-9 items-center flex-col w-full'>
             <div className="radial-progress bg-primary text-primary-content border-4 border-primary" style={{"--value":100-progressBarWidth}} role="progressbar">{100-progressBarWidth}%</div>
             <span className="mt-3">{remainingQuota.toFixed(2)} MB / {quotaLimit} MB</span>
+        </div>
+
+        <div className='ml-5'>
+            /{pathFolder}
         </div>
 
         <div 

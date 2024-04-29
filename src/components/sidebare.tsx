@@ -8,7 +8,7 @@ import FileSystem from './FileSystem'
 import { initialFolderStructure } from '@/utils/folderStructure'
 
 function SideBare() {
-  const {quotaUsed,setQuotaUsed,fileData,setFileData}=useQuota();
+  const {quotaUsed,setPathFolder,setQuotaUsed,fileData,setFileData}=useQuota();
   const [loading, setLoading] = useState(false);
   const {user}=useAuth();
   

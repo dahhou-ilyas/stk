@@ -1,5 +1,6 @@
 import { createFOlderInFirebaseStorage } from '@/firebase/uploadsSevice';
 import { useAuth } from '@/store/auth-context';
+import { useQuota } from '@/store/uploadsContext';
 import { Folder, addFolder, deleteFolder } from '@/utils/folderStructure';
 import Image from 'next/image';
 import { useState } from 'react';
@@ -12,7 +13,8 @@ interface FileSystemProps {
 
 const FileSystem: React.FC<FileSystemProps> = ({ initialFolders }) => {
   const [folders, setFolders] = useState<Folder[]>(initialFolders);
-  const { user } = useAuth(); 
+  const { user } = useAuth();
+  const {pathFolder,setPathFolder} = useQuota();
 
   const addFolderToFolder = async (parentId: string | null, parentPath: string) => {
     const folderName = prompt("Nom du nouveau dossier") || 'Nouveau dossier';
@@ -47,10 +49,11 @@ const FileSystem: React.FC<FileSystemProps> = ({ initialFolders }) => {
           const newParentPath = parentPath ? `${parentPath}/${folder.name}` : folder.name;
 
           return (
-            <li key={folder.id} style={{ marginLeft: `${depth * 20}px` }}>
-              <div className='flex flex-row gap-x-2 justify-between'>
-                <div className='flex gap-x-2 justify-center items-center'>
-                  <FaFolder /> {folder.name}
+            <li key={folder.id} style={{ marginLeft: `${depth}px` }}>
+              <div className='flex px-2 flex-row gap-x-2 justify-between items-center'>
+                <div onClick={()=>setPathFolder(newParentPath)} className='flex gap-x-2 justify-center items-center'>
+                  <Image className='' alt='fld' width={15} height={15} src={"/folder.png"} /> 
+                  {folder.name}
                 </div>
                 <div className='flex gap-x-2 justify-center items-center'>
                   <button onClick={() => addFolderToFolder(folder.id, newParentPath)}>
@@ -61,7 +64,7 @@ const FileSystem: React.FC<FileSystemProps> = ({ initialFolders }) => {
                   </button>
                 </div>
               </div>
-              {folder.children.length > 0 && renderFolders(folder.children, depth + 1, newParentPath)}
+              {folder.children.length > 0 && renderFolders(folder.children, depth + 10, newParentPath)}
             </li>
           );
         })}
@@ -71,12 +74,17 @@ const FileSystem: React.FC<FileSystemProps> = ({ initialFolders }) => {
 
   return (
     <div>
-      <button 
-        className='flex justify-end items-end gap-x-2 my-2' 
-        onClick={() => addFolderToFolder(null, "")} // Créer un dossier à la racine
-      >
-        <Image src={"/addFolder.png"} width={25} height={25} alt='addF'/>
-      </button>
+      <div className='flex flex-row justify-between items-center px-2'>
+        <button 
+          className='flex justify-end items-end gap-x-2 my-2' 
+          onClick={() => addFolderToFolder(null, "")} // Créer un dossier à la racine
+        >
+          <Image src={"/addFolder.png"} width={25} height={25} alt='addF'/>
+        </button>
+        <div onClick={e=>setPathFolder('')} className='font-extrabold cursor-pointer'>
+          <p>/Root</p>
+        </div>
+      </div>
       {renderFolders(folders)}
     </div>
   );
