@@ -1,5 +1,6 @@
 import { useQuota } from '@/store/uploadsContext'
 import React from 'react'
+import getFileTypeComponent from './getFileTypeComponent';
 
 type Props = {}
 
@@ -15,8 +16,9 @@ const CardDataInfo = (props: Props) => {
             <button onClick={handlClick} className='bg-secondary text-secondary-content py-2 px-3 border-0 rounded-lg left-9'>Uploads</button>
         </div>
         <div className='h-full p-1'>
-            <iframe width={"100%"} height={"600"} src={specificCardData?.url} ></iframe>
+            <div className='h-full p-1'>{getFileTypeComponent(specificCardData!)}</div>
         </div>
+    
     </div>
   )
 }

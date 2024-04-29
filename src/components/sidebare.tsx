@@ -31,7 +31,7 @@ function SideBare() {
 
 
   return (
-    <div className='max-md:w-[40%] min-w-[20%] bg-white/10'>
+    <div className='max-md:w-[40%] min-w-[20%] h-screen bg-white/10'>
       <FileSystem initialFolders={initialFolderStructure} />
       { loading ?
         <p>Chargement...</p>:
