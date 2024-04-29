@@ -42,13 +42,7 @@ const getFileTypeComponent = (file:customFile) => {
 
     case 'txt':
       return (
-        <div>
-          <pre>
-            <a href={url} download>
-              Download the text file
-            </a>
-          </pre>
-        </div>
+        <iframe width="100%" height="600" src={url} title={name} />
       );
 
     case 'xlsx':
@@ -61,9 +55,7 @@ const getFileTypeComponent = (file:customFile) => {
 
     default:
       return (
-        <div>
-          <p>Unsupported file type. Download it <a href={url}>here</a>.</p>
-        </div>
+        <iframe width="100%" height="600" src={url} title={name} />
       );
   }
 };
