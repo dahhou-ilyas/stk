@@ -51,7 +51,7 @@ const FileSystem: React.FC<FileSystemProps> = ({ initialFolders }) => {
           return (
             <li key={folder.id} style={{ marginLeft: `${depth}px` }}>
               <div className='flex px-2 flex-row gap-x-2 justify-between items-center'>
-                <div onClick={()=>setPathFolder(newParentPath)} className='flex gap-x-2 justify-center items-center'>
+                <div onClick={()=>setPathFolder(newParentPath)} className='cursor-pointer flex gap-x-2 justify-center items-center'>
                   <Image className='' alt='fld' width={15} height={15} src={"/folder.png"} /> 
                   {folder.name}
                 </div>

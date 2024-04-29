@@ -20,7 +20,7 @@ function UploadsComponent({}: Props) {
     const handleFileUpload = () => {
         if(file){
             setIsupload(true);
-            uploadFileToUserFolder(user?.uid as string,file[0]).then(data=>{
+            uploadFileToUserFolder(user?.uid as string,file[0],pathFolder).then(data=>{
                 toast.success("your file is succefily uploaded");
                 setIsupload(false);
                 setFile(null);

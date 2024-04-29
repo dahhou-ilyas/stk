@@ -3,10 +3,10 @@ import { deleteObject, getDownloadURL, getMetadata, getStorage, listAll, ref, up
 import app,{Firestore} from "./firebase";
 import { doc, getDoc } from "firebase/firestore";
 
-export const uploadFileToUserFolder = async (userId: string, file: File) => {
+export const uploadFileToUserFolder = async (userId: string, file: File,pathFolder:string) => {
     // Obtenez une référence au dossier de l'utilisateur dans Firebase Storage
     const storage = getStorage(app);
-    const userFolderRef = ref(storage, `users/${userId}`);
+    const userFolderRef = ref(storage, `users/${userId}/${pathFolder}`);
 
     // Obtenez une référence au fichier que vous souhaitez télécharger
     const fileRef = ref(userFolderRef, file.name);
