@@ -5,6 +5,7 @@ import { useAuth } from '@/store/auth-context'
 import { useQuota } from '@/store/uploadsContext';
 import { useState } from 'react'
 import { toast } from 'react-hot-toast';
+import Spiner from '@/components/spinner';
 
 type Props = {}
 
@@ -52,7 +53,8 @@ function UploadsComponent({}: Props) {
         }
     };
   return (
-    <>
+    user ? (
+        <>
         <h1 className='text-3xl text-center mt-7'>Upload Anything</h1>
 
         <div className='flex justify-center my-9 items-center flex-col w-full'>
@@ -106,6 +108,9 @@ function UploadsComponent({}: Props) {
             </label>
         </div>
     </>
+    ):(
+        <Spiner/>
+    )
   )
 }
 
