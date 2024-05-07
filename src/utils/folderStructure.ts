@@ -1,5 +1,5 @@
 import { customFile } from "@/store/uploadsContext";
-import { StorageReference, getDownloadURL, getMetadata } from "firebase/storage";
+import { FullMetadata, StorageReference, getDownloadURL, getMetadata, listAll } from "firebase/storage";
 
 export interface Folder {
   id: string;
@@ -46,79 +46,62 @@ export const deleteFolder = (folders: Folder[], folderId: string): Folder[] => {
 
 
 
+export interface FolderTraversalResult extends Folder {
+  totalSizeInMB?: number;
+}
 
+export const traverseStorage = async (
+  folderRef: StorageReference, // Définition du type de référence
+  parentId: string | null = null // Paramètre parentId avec valeur par défaut
+): Promise<FolderTraversalResult> => { // Le type de retour est une promesse de FolderTraversalResult
+  const listResult = await listAll(folderRef);
 
+  // Collecte des fichiers avec des promesses pour obtenir les détails
+  const filesPromises = listResult.items.map(async (fileRef) => {
+    const url = await getDownloadURL(fileRef); // URL du fichier
+    const metadata: FullMetadata = await getMetadata(fileRef); // Métadonnées pour des informations supplémentaires
 
-const buildFolderHierarchy = async (folders: StorageReference[],files: StorageReference[]): Promise<Folder[]> => {
-  const folderMap: Record<string, Folder> = {};
-
-  // Construire la structure hiérarchique des dossiers
-  folders.forEach((folderRef) => {
-    const parts = folderRef.fullPath.split('/');
-    let currentFolder: Folder = folderMap[parts[0]] || {
-      id: parts[0],
-      name: parts[0],
-      parentId: null,
-      children: [],
-    };
-
-    folderMap[parts[0]] = currentFolder;
-
-    let currentPath = parts[0];
-
-    for (let i = 1; i < parts.length; i++) {
-      const part = parts[i];
-      currentPath += '/' + part;
-
-      const existingFolder = currentFolder.children.find(
-        (child) => 'children' in child && child.name === part
-      ) as Folder | undefined;
-
-      if (!existingFolder) {
-        const parentId = i > 0 ? parts.slice(0, i).join('/') : null;
-
-        const newFolder: Folder = {
-          id: currentPath,
-          name: part,
-          parentId,
-          children: [],
-        };
-
-        currentFolder.children.push(newFolder);
-        currentFolder = newFolder;
-      } else {
-        currentFolder = existingFolder;
-      }
-    }
+    return {
+      name: fileRef.name,
+      url,
+      ref:fileRef,
+      size: metadata.size || 0,
+      isFile: true, // Indique qu'il s'agit d'un fichier
+    } as customFile; // Typage explicite
   });
 
-  // Ajouter les fichiers à la hiérarchie des dossiers appropriés
-  for (const fileRef of files) {
-    const parts = fileRef.fullPath.split('/');
-    const fileName = parts.pop()!;
-    const parentFolderPath = parts.join('/');
+  const files = await Promise.all(filesPromises);
 
-    const url = await getDownloadURL(fileRef);
-    const metadata = await getMetadata(fileRef);
+  // Somme des tailles des fichiers en octets
+  const totalSizeInBytes = files.reduce((sum, file) => sum + file.size, 0);
+  const totalSizeInMB = totalSizeInBytes / (1024 * 1024); // Conversion en mégaoctets
 
-    const customFile: customFile = {
-      name: fileName,
-      url,
-      ref: fileRef,
-      size: metadata.size,
-      isFile: true,
-    };
+  // Collecte des dossiers
+  const foldersPromises = listResult.prefixes.map(async (subFolderRef) => {
+    const folderContent = await traverseStorage(subFolderRef, folderRef.fullPath); // Appel récursif
 
-    let currentFolder = folderMap[parts[0]];
+    return {
+      id: subFolderRef.fullPath,
+      name: subFolderRef.name,
+      parentId,
+      fullPath: subFolderRef.fullPath,
+      children: folderContent.children, // Structure hiérarchique
+      totalSizeInMB: folderContent.totalSizeInMB, // Taille totale dans le dossier
+    } as Folder;
+  });
 
-    for (const part of parts.slice(1)) {
-      currentFolder = currentFolder.children.find(
-        (child) => 'children' in child && child.name === part
-      ) as Folder;
-    }
+  const folders:FolderTraversalResult[] = await Promise.all(foldersPromises);
 
-    currentFolder.children.push(customFile);
-  }
+  // Calculez la taille totale pour ce dossier
+  const combinedTotalSizeInMB = totalSizeInMB + folders.reduce((sum, folder) => sum + (folder.totalSizeInMB || 0), 0);
 
-  return Object.values(folderMap);
+  // Retourne une structure hiérarchique de dossiers et fichiers avec la taille totale
+  return {
+    id: folderRef.fullPath,
+    name: folderRef.name || folderRef.fullPath.split("/").pop(),
+    parentId,
+    fullPath: folderRef.fullPath,
+    children: [...folders, ...files], // Combine les dossiers et les fichiers
+    totalSizeInMB: combinedTotalSizeInMB, // Taille totale des fichiers
+  } as FolderTraversalResult; // Typage explicite
 };
