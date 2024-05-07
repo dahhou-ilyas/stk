@@ -12,6 +12,7 @@ export interface customFile{
   url: string;
   ref: StorageReference;
   size: number;
+  isFile ?: boolean;
 }
 
 

@@ -64,7 +64,7 @@ const FileSystem: React.FC<FileSystemProps> = ({ initialFolders }) => {
                   </button>
                 </div>
               </div>
-              {folder.children.length > 0 && renderFolders(folder.children, depth + 10, newParentPath)}
+              {folder.children.length > 0 && renderFolders(folder.children as Folder[], depth + 10, newParentPath)}
             </li>
           );
         })}
