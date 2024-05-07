@@ -19,8 +19,6 @@ export interface customFile{
 interface QuotaContextType {
     quotaUsed: number;
     setQuotaUsed: Dispatch<SetStateAction<number>>;
-    fileData:customFile[],
-    setFileData:Dispatch<SetStateAction<customFile[]>>;
     isCardClicked:boolean;
     setIsCardClicked:Dispatch<SetStateAction<boolean>>;
     specificCardData:customFile | undefined;
@@ -33,12 +31,11 @@ const QuotaContext = createContext<QuotaContextType | null>(null);
 
 export function UploadsProvider({children}: QuotaProviderProps) {
     const [quotaUsed, setQuotaUsed] = useState(0);
-    const [fileData, setFileData] = useState<customFile[]>([]);
     const [isCardClicked,setIsCardClicked]=useState(false);
     const [specificCardData,setSpecificCardData]=useState<customFile | undefined>();
     const [pathFolder,setPathFolder]=useState<string>('');
     return (
-      <QuotaContext.Provider value={{setPathFolder,pathFolder,quotaUsed, setQuotaUsed,setFileData,fileData,isCardClicked,setIsCardClicked,specificCardData,setSpecificCardData}}>
+      <QuotaContext.Provider value={{setPathFolder,pathFolder,quotaUsed, setQuotaUsed,isCardClicked,setIsCardClicked,specificCardData,setSpecificCardData}}>
         {children}
       </QuotaContext.Provider>
     );

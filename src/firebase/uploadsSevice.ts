@@ -1,6 +1,7 @@
 import { deleteObject, getDownloadURL, getMetadata, getStorage, listAll, ref, uploadBytes, uploadBytesResumable } from "firebase/storage";
 
 import app from "./firebase";
+import { traverseStorage } from "@/utils/folderStructure";
 
 export const uploadFileToUserFolder = async (userId: string, file: File,pathFolder:string) => {
     // Obtenez une référence au dossier de l'utilisateur dans Firebase Storage
@@ -30,33 +31,10 @@ export const getFileListForUser = async (userId:string) =>{
     try {
         const storage = getStorage(); // Obtenir l'instance Firebase Storage
         const userFolderRef = ref(storage, `users/${userId}/`); // Dossier de l'utilisateur
-    
-        // Liste tous les fichiers dans le dossier
-        const listResult = await listAll(userFolderRef);
-    
-        const filePromises = listResult.items.map((itemRef) =>
-            getMetadata(itemRef).then((metadata) =>
-              getDownloadURL(itemRef).then((url) => ({
-                name: itemRef.name,
-                url,
-                ref: itemRef,
-                size: metadata.size, // Taille du fichier en bytes
-              }))
-            )
-        );
-    
-        const fileList = await Promise.all(filePromises);
-        
-        // Calculer la taille totale en bytes
-        const totalSizeInBytes = fileList.reduce((total, file) => total + file.size, 0);
 
-        // Convertir la taille totale en mégaoctets
-        const totalSizeInMB = totalSizeInBytes / (1024 * 1024);
+        const result=await traverseStorage(userFolderRef)
 
-        return {
-            fileList,
-            totalSizeInMB, // Retourne également la taille totale en mégaoctets
-        };
+        return result;
 
 
       } catch (error) {

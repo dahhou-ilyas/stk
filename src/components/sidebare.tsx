@@ -8,7 +8,7 @@ import FileSystem from './FileSystem'
 import { initialFolderStructure } from '@/utils/folderStructure'
 
 function SideBare() {
-  const {quotaUsed,setPathFolder,setQuotaUsed,fileData,setFileData}=useQuota();
+  const {quotaUsed,setPathFolder,setQuotaUsed}=useQuota();
   const [loading, setLoading] = useState(false);
   const {user}=useAuth();
   
@@ -16,9 +16,8 @@ function SideBare() {
     setLoading(true)
     const fetchData=async ()=>{
       try{
-        const {fileList,totalSizeInMB}=await getFileListForUser(user?.uid as string);
-        setFileData(fileList);
-        setQuotaUsed(totalSizeInMB)
+        const {totalSizeInMB}=await getFileListForUser(user?.uid as string);
+        setQuotaUsed(totalSizeInMB as number)
         setLoading(false);
       }catch (error) {
         console.error("Erreur lors de la récupération des fichiers :", error);
@@ -33,12 +32,12 @@ function SideBare() {
   return (
     <div className='max-md:w-[40%] min-w-[20%] h-screen bg-white/10'>
       <FileSystem initialFolders={initialFolderStructure} />
-      { loading ?
+      {/* { loading ?
         <p>Chargement...</p>:
         fileData.map((data,index)=>{
           return <CardFile key={index} data={data}/>
         })
-      }
+      } */}
     </div>
   )
 }

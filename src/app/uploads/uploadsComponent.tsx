@@ -11,7 +11,7 @@ type Props = {}
 
 function UploadsComponent({}: Props) {
     const { user } = useAuth();
-    const { pathFolder,quotaUsed, setQuotaUsed,setFileData } = useQuota();
+    const { pathFolder,quotaUsed, setQuotaUsed } = useQuota();
     const [isupload,setIsupload]=useState<boolean>(false);
     const [quotaLimit, setQuotaLimit] = useState(150);
     const [file,setFile]=useState<FileList | null>()
@@ -26,7 +26,7 @@ function UploadsComponent({}: Props) {
                 setIsupload(false);
                 setFile(null);
                 if(data!=undefined){
-                    setFileData(prev=>[data,...prev])
+                    // setFileData(prev=>[data,...prev])
                 }
                 const size=(file[0].size)/ (1024 * 1024)
                 setQuotaUsed(prev=>prev+size); 
