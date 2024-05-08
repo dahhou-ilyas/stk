@@ -1,4 +1,4 @@
-import { createFOlderInFirebaseStorage, deleteFromFirebase, getFileListForUser } from '@/firebase/uploadsSevice';
+import { createFOlderInFirebaseStorage, getFileListForUser } from '@/firebase/uploadsSevice';
 import { useAuth } from '@/store/auth-context';
 import { customFile, useQuota } from '@/store/uploadsContext';
 import { Folder, addFolder, deleteFolder, findFolderById } from '@/utils/folderStructure';
@@ -21,7 +21,6 @@ const FileSystem: React.FC<FileSystemProps> = ({ initialFolders }) => {
     const setHearchique= async()=>{
       const result=await getFileListForUser(user?.uid as string)
       setHearchiqueSysFile(result)
-      console.log(result);
     }
     if(user){
       setHearchique()
@@ -33,34 +32,28 @@ const FileSystem: React.FC<FileSystemProps> = ({ initialFolders }) => {
     parentPath: string
   ) => {
 
+
     if (!hearchiqueSysFile) {
       console.error("Le système de fichiers hiérarchique n'est pas défini.");
       return;
     }
 
-    // const targetFolder = findFolderById(hearchiqueSysFile, parentId);
-
-    // const folderName = prompt("Nom du nouveau dossier") || "Nouveau dossier";
-    // const newFolder: Folder = {
-    //   id: uuidv4(),
-    //   name: folderName,
-    //   parentId,
-    //   children: [],
-    // };
-  
-    // if (user?.uid) {
-    //   try {
-    //     const folderPath = parentPath ? `${parentPath}/${folderName}` : folderName;
-    //     await createFOlderInFirebaseStorage(user.uid, folderPath); // Créez le dossier dans Firebase Storage
-  
-    //     setFolders((prev) => {
-    //       if (!prev) return newFolder; // Si `prev` est null, retournez le nouveau dossier
-    //       return addFolder(prev, parentId, newFolder); // Utilisez `addFolder` pour ajouter le nouveau dossier
-    //     });
-    //   } catch (error) {
-    //     console.error("Erreur lors de la création du dossier:", error);
-    //   }
-    // }
+    const targetFolder = findFolderById(hearchiqueSysFile, parentId as string);
+    if (targetFolder) {
+      const folderName = prompt("Nom du nouveau dossier") || "Nouveau dossier";
+      const newFolder: Folder = {
+        id: uuidv4(),
+        name: folderName,
+        parentId,
+        children: [],
+      };
+      await createFOlderInFirebaseStorage(parentId+'/'+folderName);
+      targetFolder.children.push(newFolder);
+      setHearchiqueSysFile({ ...hearchiqueSysFile });
+    }else {
+      console.error(`Le dossier avec ID ${targetFolder} n'a pas été trouvé.`);
+    }
+    
   };
 
   const deleteFolderById = async (folderId: string) => {
@@ -88,7 +81,7 @@ const FileSystem: React.FC<FileSystemProps> = ({ initialFolders }) => {
           const newParentPath = parentPath ? `${parentPath}/${item.name}` : item.name;
   
           return (
-            <li key={(item as Folder).id} style={{ marginLeft: `${depth}px` }}>
+            <li key={((item as Folder).id || "ee")+index} style={{ marginLeft: `${depth}px` }}>
               <div className='flex px-2 flex-row gap-x-2 justify-between items-center'>
                 {isFolder ? (
                   <>
@@ -106,7 +99,7 @@ const FileSystem: React.FC<FileSystemProps> = ({ initialFolders }) => {
                     </div>
                   </>
                 ) : (
-                  <CardFile key={index} data={item as customFile}/>
+                  <CardFile key={item.name+index} data={item as customFile}/>
                 )}
               </div>
   

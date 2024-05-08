@@ -14,7 +14,6 @@ function CardFile({data}: Props) {
   const {setIsCardClicked,setSpecificCardData,setQuotaUsed}=useQuota();
   
   function handleDelete(e:any){
-    console.log(data.ref.fullPath);
     e.stopPropagation();
     deleteFromFirebase(data.ref.fullPath).then(res=>{
       setQuotaUsed(prevQuoata=>prevQuoata-(data.size/(1024*1024)))

@@ -50,7 +50,6 @@ export const updateImageUrl=async (user:User,urlImage:string)=>{
       await updateProfile(user, {
         photoURL: urlImage,
       });
-      console.log("Image de profil mise à jour avec succès.");
     } catch (error) {
       console.error("Erreur lors de la mise à jour de l'image de profil :", error);
       throw error;
@@ -62,7 +61,6 @@ export const SignInWithGoogle = async () =>{
     const provider =new GoogleAuthProvider();
     try {
         const result =await signInWithPopup(auth,provider)
-        console.log("auth with google pass bien");
     } catch (error) {
         console.error("il ya une erreur avec google auth "+error);
     }

@@ -49,7 +49,6 @@ function UserInfo() {
 
             if (selectedFile) {
                 const photoURL = await uploadImageToFirebaseStorage(selectedFile, user?.uid as string);
-                console.log(photoURL);
                 updateImageUrl(user as User,photoURL)
                 toast.success('upload image');
             }

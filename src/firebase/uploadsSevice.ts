@@ -84,10 +84,10 @@ export function deleteFromFirebase(filePath:string){
     })
 }
 
-export const createFOlderInFirebaseStorage=async (userId:string,folderPath:string)=>{
+export const createFOlderInFirebaseStorage=async (folderPath:string)=>{
     try {
         const storage=getStorage(app);
-        const folderRef=ref(storage, `users/${userId}/${folderPath}/.folderIndicator`);
+        const folderRef=ref(storage, `${folderPath}/.folderIndicator`);
         const emptyFile=new Blob(['']);
         await uploadBytes(folderRef,emptyFile);
         console.log("folder crée avec succes");
