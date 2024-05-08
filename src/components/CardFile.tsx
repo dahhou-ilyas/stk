@@ -11,15 +11,13 @@ type Props = {
 }
 
 function CardFile({data}: Props) {
-  const {setIsCardClicked,setSpecificCardData,setFileData,setQuotaUsed}=useQuota();
+  const {setIsCardClicked,setSpecificCardData,setQuotaUsed}=useQuota();
   
   function handleDelete(e:any){
+    console.log(data.ref.fullPath);
     e.stopPropagation();
     deleteFromFirebase(data.ref.fullPath).then(res=>{
       setQuotaUsed(prevQuoata=>prevQuoata-(data.size/(1024*1024)))
-      setFileData(prev=>{
-        return prev.filter(datainfo=>datainfo.name!=data.name);
-      })
     }).catch((err)=>{
       console.log(err);
       toast.error("file not delted");

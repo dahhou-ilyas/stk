@@ -31,6 +31,7 @@ const QuotaContext = createContext<QuotaContextType | null>(null);
 
 export function UploadsProvider({children}: QuotaProviderProps) {
     const [quotaUsed, setQuotaUsed] = useState(0);
+    
     const [isCardClicked,setIsCardClicked]=useState(false);
     const [specificCardData,setSpecificCardData]=useState<customFile | undefined>();
     const [pathFolder,setPathFolder]=useState<string>('');

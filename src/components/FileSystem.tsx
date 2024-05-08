@@ -1,70 +1,109 @@
-import { createFOlderInFirebaseStorage } from '@/firebase/uploadsSevice';
+import { createFOlderInFirebaseStorage, deleteFromFirebase, getFileListForUser } from '@/firebase/uploadsSevice';
 import { useAuth } from '@/store/auth-context';
-import { useQuota } from '@/store/uploadsContext';
+import { customFile, useQuota } from '@/store/uploadsContext';
 import { Folder, addFolder, deleteFolder } from '@/utils/folderStructure';
 import Image from 'next/image';
-import { useState } from 'react';
-import { FaFolder, FaPlus, FaTrash } from 'react-icons/fa';
+import { useEffect, useState } from 'react';
+import { FaFileAlt, FaFolder, FaPlus, FaTrash } from 'react-icons/fa';
 import { v4 as uuidv4 } from 'uuid';
+import CardFile from './CardFile';
 
 interface FileSystemProps {
   initialFolders: Folder[];
 }
 
 const FileSystem: React.FC<FileSystemProps> = ({ initialFolders }) => {
-  const [folders, setFolders] = useState<Folder[]>(initialFolders);
+  const [folders, setFolders] = useState<Folder>();
   const { user } = useAuth();
   const {pathFolder,setPathFolder} = useQuota();
 
-  const addFolderToFolder = async (parentId: string | null, parentPath: string) => {
-    const folderName = prompt("Nom du nouveau dossier") || 'Nouveau dossier';
-    const newFolder: Folder = {
-      id: uuidv4(),
-      name: folderName,
-      parentId,
-      children: [],
-    };
-
-    if (user?.uid) {
-      try {
-        const folderPath = parentPath ? `${parentPath}/${folderName}` : folderName;
-        await createFOlderInFirebaseStorage(user.uid, folderPath); // Créez le dossier dans Firebase Storage
-        console.log('Folder created successfully in Firebase Storage.');
-
-        setFolders((prev) => addFolder([...prev], parentId, newFolder)); // Ajoutez le nouveau dossier au state local
-      } catch (error) {
-        console.error('Erreur lors de la création du dossier:', error);
-      }
+  useEffect(()=>{
+    const setHearchique= async()=>{
+      const result=await getFileListForUser(user?.uid as string)
+      setFolders(result)
+      console.log(result);
     }
+    if(user){
+      setHearchique()
+    }
+  },[user])
+
+  const addFolderToFolder = async (
+    parentId: string | null,
+    parentPath: string
+  ) => {
+    // const folderName = prompt("Nom du nouveau dossier") || "Nouveau dossier";
+    // const newFolder: Folder = {
+    //   id: uuidv4(),
+    //   name: folderName,
+    //   parentId,
+    //   children: [],
+    // };
+  
+    // if (user?.uid) {
+    //   try {
+    //     const folderPath = parentPath ? `${parentPath}/${folderName}` : folderName;
+    //     await createFOlderInFirebaseStorage(user.uid, folderPath); // Créez le dossier dans Firebase Storage
+  
+    //     setFolders((prev) => {
+    //       if (!prev) return newFolder; // Si `prev` est null, retournez le nouveau dossier
+    //       return addFolder(prev, parentId, newFolder); // Utilisez `addFolder` pour ajouter le nouveau dossier
+    //     });
+    //   } catch (error) {
+    //     console.error("Erreur lors de la création du dossier:", error);
+    //   }
+    // }
   };
 
-  const deleteFolderById = (folderId: string) => {
-    setFolders((prev) => deleteFolder([...prev], folderId)); // Supprimer le dossier du state local
+  const deleteFolderById = async (folderId: string) => {
+    // if (user?.uid) {
+    //   try {
+    //     const folderPath = ""; // Définissez le chemin complet du dossier à supprimer
+    //     await deleteFromFirebase(folderPath); // Suppression dans Firebase Storage
+  
+    //     setFolders((prev) => {
+    //       if (!prev) return null; // Si `prev` est null, retournez `null`
+    //       return deleteFolder(prev, folderId); // Utilisez `deleteFolder` pour supprimer le dossier
+    //     });
+    //   } catch (error) {
+    //     console.error("Erreur lors de la suppression du dossier:", error);
+    //   }
+    // }
   };
-
-  const renderFolders = (folders: Folder[], depth: number = 0, parentPath = "") => {
+  const renderFolders = (folders: Folder, depth: number = 0, parentPath = "") => {
     return (
       <ul>
-        {folders.map((folder) => {
-          const newParentPath = parentPath ? `${parentPath}/${folder.name}` : folder.name;
-
+        {folders.children.map((item,index) => {
+          // Détermine le type de l'élément
+          const isFolder = (item as Folder).children !== undefined;
+  
+          const newParentPath = parentPath ? `${parentPath}/${item.name}` : item.name;
+  
           return (
-            <li key={folder.id} style={{ marginLeft: `${depth}px` }}>
+            <li key={(item as Folder).id} style={{ marginLeft: `${depth}px` }}>
               <div className='flex px-2 flex-row gap-x-2 justify-between items-center'>
-                <div onClick={()=>setPathFolder(newParentPath)} className='cursor-pointer flex gap-x-2 justify-center items-center'>
-                  <Image className='' alt='fld' width={15} height={15} src={"/folder.png"} /> 
-                  {folder.name}
-                </div>
-                <div className='flex gap-x-2 justify-center items-center'>
-                  <button onClick={() => addFolderToFolder(folder.id, newParentPath)}>
-                    <FaPlus />
-                  </button>
-                  <button onClick={() => deleteFolderById(folder.id)}>
-                    <FaTrash />
-                  </button>
-                </div>
+                {isFolder ? (
+                  <>
+                    <div onClick={() => setPathFolder(newParentPath)} className='cursor-pointer flex gap-x-2 justify-center items-center'>
+                      <Image alt='folder' width={15} height={15} src={"/folder.png"} />
+                      {item.name}
+                    </div>
+                    <div className='flex gap-x-2 justify-center items-center'>
+                      <button onClick={() => addFolderToFolder((item as Folder).id, newParentPath)}>
+                        <FaPlus />
+                      </button>
+                      <button onClick={() => deleteFolderById((item as Folder).id)}>
+                        <FaTrash />
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <CardFile key={index} data={item as customFile}/>
+                )}
               </div>
-              {folder.children.length > 0 && renderFolders(folder.children as Folder[], depth + 10, newParentPath)}
+  
+              {/* Si c'est un dossier, récursion pour ses enfants */}
+              {isFolder && renderFolders(item as Folder, depth + 10, newParentPath)}
             </li>
           );
         })}
@@ -85,7 +124,10 @@ const FileSystem: React.FC<FileSystemProps> = ({ initialFolders }) => {
           <p>/Root</p>
         </div>
       </div>
-      {renderFolders(folders)}
+      {
+        (folders) && 
+        renderFolders(folders as Folder)
+      }
     </div>
   );
 };
