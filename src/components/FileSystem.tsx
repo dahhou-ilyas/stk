@@ -1,7 +1,7 @@
 import { createFOlderInFirebaseStorage, deleteFromFirebase, getFileListForUser } from '@/firebase/uploadsSevice';
 import { useAuth } from '@/store/auth-context';
 import { customFile, useQuota } from '@/store/uploadsContext';
-import { Folder, addFolder, deleteFolder } from '@/utils/folderStructure';
+import { Folder, addFolder, deleteFolder, findFolderById } from '@/utils/folderStructure';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { FaFileAlt, FaFolder, FaPlus, FaTrash } from 'react-icons/fa';
@@ -13,14 +13,14 @@ interface FileSystemProps {
 }
 
 const FileSystem: React.FC<FileSystemProps> = ({ initialFolders }) => {
-  const [folders, setFolders] = useState<Folder>();
+  
   const { user } = useAuth();
-  const {pathFolder,setPathFolder} = useQuota();
+  const {pathFolder,setPathFolder,hearchiqueSysFile,setHearchiqueSysFile} = useQuota();
 
   useEffect(()=>{
     const setHearchique= async()=>{
       const result=await getFileListForUser(user?.uid as string)
-      setFolders(result)
+      setHearchiqueSysFile(result)
       console.log(result);
     }
     if(user){
@@ -32,6 +32,14 @@ const FileSystem: React.FC<FileSystemProps> = ({ initialFolders }) => {
     parentId: string | null,
     parentPath: string
   ) => {
+
+    if (!hearchiqueSysFile) {
+      console.error("Le système de fichiers hiérarchique n'est pas défini.");
+      return;
+    }
+
+    // const targetFolder = findFolderById(hearchiqueSysFile, parentId);
+
     // const folderName = prompt("Nom du nouveau dossier") || "Nouveau dossier";
     // const newFolder: Folder = {
     //   id: uuidv4(),
@@ -125,8 +133,8 @@ const FileSystem: React.FC<FileSystemProps> = ({ initialFolders }) => {
         </div>
       </div>
       {
-        (folders) && 
-        renderFolders(folders as Folder)
+        (hearchiqueSysFile) && 
+        renderFolders(hearchiqueSysFile as Folder)
       }
     </div>
   );

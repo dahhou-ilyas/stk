@@ -112,15 +112,16 @@ export interface FolderTraversalResult extends Folder {
 }
 
 export const traverseStorage = async (
-  folderRef: StorageReference, // Définition du type de référence
-  parentId: string | null = null // Paramètre parentId avec valeur par défaut
-): Promise<FolderTraversalResult> => { // Le type de retour est une promesse de FolderTraversalResult
+  folderRef: StorageReference,
+  parentId: string | null = null 
+): Promise<FolderTraversalResult> => { 
+
   const listResult = await listAll(folderRef);
 
-  // Collecte des fichiers avec des promesses pour obtenir les détails
+
   const filesPromises = listResult.items.map(async (fileRef) => {
-    const url = await getDownloadURL(fileRef); // URL du fichier
-    const metadata: FullMetadata = await getMetadata(fileRef); // Métadonnées pour des informations supplémentaires
+    const url = await getDownloadURL(fileRef);
+    const metadata: FullMetadata = await getMetadata(fileRef);
 
     return {
       name: fileRef.name,
@@ -133,36 +134,55 @@ export const traverseStorage = async (
 
   const files = await Promise.all(filesPromises);
 
-  // Somme des tailles des fichiers en octets
-  const totalSizeInBytes = files.reduce((sum, file) => sum + file.size, 0);
-  const totalSizeInMB = totalSizeInBytes / (1024 * 1024); // Conversion en mégaoctets
 
-  // Collecte des dossiers
+  const totalSizeInBytes = files.reduce((sum, file) => sum + file.size, 0);
+  const totalSizeInMB = totalSizeInBytes / (1024 * 1024);
+
+
   const foldersPromises = listResult.prefixes.map(async (subFolderRef) => {
-    const folderContent = await traverseStorage(subFolderRef, folderRef.fullPath); // Appel récursif
+    console.log("assasasasa         ",folderRef.fullPath);
+    const folderContent = await traverseStorage(subFolderRef, folderRef.fullPath); 
 
     return {
       id: subFolderRef.fullPath,
       name: subFolderRef.name,
-      parentId,
+      parentId:folderRef.fullPath,
       fullPath: subFolderRef.fullPath,
-      children: folderContent.children, // Structure hiérarchique
-      totalSizeInMB: folderContent.totalSizeInMB, // Taille totale dans le dossier
+      children: folderContent.children,
+      totalSizeInMB: folderContent.totalSizeInMB,
     } as Folder;
   });
 
   const folders:FolderTraversalResult[] = await Promise.all(foldersPromises);
 
-  // Calculez la taille totale pour ce dossier
+
   const combinedTotalSizeInMB = totalSizeInMB + folders.reduce((sum, folder) => sum + (folder.totalSizeInMB || 0), 0);
 
-  // Retourne une structure hiérarchique de dossiers et fichiers avec la taille totale
+
   return {
     id: folderRef.fullPath,
     name: folderRef.name || folderRef.fullPath.split("/").pop(),
     parentId,
     fullPath: folderRef.fullPath,
-    children: [...folders, ...files], // Combine les dossiers et les fichiers
-    totalSizeInMB: combinedTotalSizeInMB, // Taille totale des fichiers
-  } as FolderTraversalResult; // Typage explicite
+    children: [...folders, ...files],
+    totalSizeInMB: combinedTotalSizeInMB,
+  } as FolderTraversalResult;
 };
+
+
+
+export const findFolderById=(rootFolder: Folder, folderId: string): Folder |undefined=>{
+  if (rootFolder.id === folderId) {
+    return rootFolder;
+  }
+
+  for (const child of rootFolder.children) {
+    if ((child as Folder).children !== undefined) {
+      const found = findFolderById(child as Folder, folderId);
+      if (found) {
+        return found;
+      }
+    }
+  }
+  return undefined;
+}

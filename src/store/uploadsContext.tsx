@@ -1,4 +1,5 @@
 "use client"
+import { Folder } from '@/utils/folderStructure';
 import { StorageReference } from 'firebase/storage';
 import React, { useContext, useState, createContext, Dispatch, SetStateAction, ReactNode } from 'react'
 
@@ -25,18 +26,20 @@ interface QuotaContextType {
     setSpecificCardData:Dispatch<SetStateAction<customFile | undefined>>;
     pathFolder:string;
     setPathFolder:Dispatch<SetStateAction<string>>;
+    hearchiqueSysFile:Folder | undefined
+    setHearchiqueSysFile:Dispatch<SetStateAction<Folder | undefined>>;
 }
 
 const QuotaContext = createContext<QuotaContextType | null>(null);
 
 export function UploadsProvider({children}: QuotaProviderProps) {
     const [quotaUsed, setQuotaUsed] = useState(0);
-    
+    const [hearchiqueSysFile, setHearchiqueSysFile]=useState<Folder | undefined>()
     const [isCardClicked,setIsCardClicked]=useState(false);
     const [specificCardData,setSpecificCardData]=useState<customFile | undefined>();
     const [pathFolder,setPathFolder]=useState<string>('');
     return (
-      <QuotaContext.Provider value={{setPathFolder,pathFolder,quotaUsed, setQuotaUsed,isCardClicked,setIsCardClicked,specificCardData,setSpecificCardData}}>
+      <QuotaContext.Provider value={{setPathFolder,pathFolder,quotaUsed, setQuotaUsed,isCardClicked,setIsCardClicked,specificCardData,setSpecificCardData,hearchiqueSysFile,setHearchiqueSysFile}}>
         {children}
       </QuotaContext.Provider>
     );
