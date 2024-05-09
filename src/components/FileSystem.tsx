@@ -39,6 +39,8 @@ const FileSystem: React.FC<FileSystemProps> = ({ initialFolders }) => {
     }
 
     const targetFolder = findFolderById(hearchiqueSysFile, parentId as string);
+    console.log(parentId);
+    
     if (targetFolder) {
       const folderName = prompt("Nom du nouveau dossier") || "Nouveau dossier";
       const newFolder: Folder = {

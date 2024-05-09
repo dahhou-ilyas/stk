@@ -118,8 +118,12 @@ export const traverseStorage = async (
 
   const listResult = await listAll(folderRef);
 
+  const validFiles = listResult.items.filter(
+    (fileRef) => fileRef.name !== ".folderIndicator" // Exclure les fichiers de marquage
+  );
+  
 
-  const filesPromises = listResult.items.map(async (fileRef) => {
+  const filesPromises = validFiles.map(async (fileRef) => {
     const url = await getDownloadURL(fileRef);
     const metadata: FullMetadata = await getMetadata(fileRef);
 

@@ -6,12 +6,13 @@ import { useQuota } from '@/store/uploadsContext';
 import { useState } from 'react'
 import { toast } from 'react-hot-toast';
 import Spiner from '@/components/spinner';
+import { Folder, findFolderById } from '@/utils/folderStructure';
 
 type Props = {}
 
 function UploadsComponent({}: Props) {
     const { user } = useAuth();
-    const { pathFolder,quotaUsed, setQuotaUsed } = useQuota();
+    const { pathFolder,quotaUsed, setQuotaUsed,setHearchiqueSysFile,hearchiqueSysFile } = useQuota();
     const [isupload,setIsupload]=useState<boolean>(false);
     const [quotaLimit, setQuotaLimit] = useState(150);
     const [file,setFile]=useState<FileList | null>()
@@ -26,7 +27,15 @@ function UploadsComponent({}: Props) {
                 setIsupload(false);
                 setFile(null);
                 if(data!=undefined){
-                    // setFileData(prev=>[data,...prev])
+                    const targetFolder = findFolderById(hearchiqueSysFile as Folder, `users/${user?.uid}/${pathFolder}`);
+                    console.log(targetFolder);
+                    targetFolder?.children.push({name:data.name
+                        ,url:data.url,
+                        ref:data.ref,
+                        size:data.size,
+                        isFile:true
+                    })
+                    setHearchiqueSysFile({ ...(hearchiqueSysFile as Folder) });
                 }
                 const size=(file[0].size)/ (1024 * 1024)
                 setQuotaUsed(prev=>prev+size); 
@@ -48,6 +57,7 @@ function UploadsComponent({}: Props) {
 
     const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
+        console.log(files);
         if (files != null) {
             setFile(files);
         }
