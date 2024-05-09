@@ -1,6 +1,7 @@
 import { deleteFromFirebase, generateShareLink } from '@/firebase/uploadsSevice'
 import { customFile, useQuota } from '@/store/uploadsContext'
 import { copyToClipboard } from '@/utils/clickCopy'
+import { Folder, findFolderById } from '@/utils/folderStructure'
 import { getIconForFileType } from '@/utils/geticons'
 import Image from 'next/image'
 import React from 'react'
@@ -11,11 +12,19 @@ type Props = {
 }
 
 function CardFile({data}: Props) {
-  const {setIsCardClicked,setSpecificCardData,setQuotaUsed}=useQuota();
+  const {setIsCardClicked,setSpecificCardData,setQuotaUsed,setHearchiqueSysFile,hearchiqueSysFile}=useQuota();
   
   function handleDelete(e:any){
     e.stopPropagation();
     deleteFromFirebase(data.ref.fullPath).then(res=>{
+      const segments = res.fullPath.split('/');
+      segments.pop();
+      const targetFolder = findFolderById(hearchiqueSysFile as Folder, segments.join('/'));
+      if(targetFolder){
+        const newShildrent=targetFolder.children.filter(item=>(item as customFile).name!==res.name);
+        targetFolder.children=newShildrent;
+      }
+      setHearchiqueSysFile({...hearchiqueSysFile as Folder})
       setQuotaUsed(prevQuoata=>prevQuoata-(data.size/(1024*1024)))
     }).catch((err)=>{
       console.log(err);

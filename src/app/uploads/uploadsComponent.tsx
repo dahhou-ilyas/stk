@@ -28,7 +28,7 @@ function UploadsComponent({}: Props) {
                 setFile(null);
                 if(data!=undefined){
                     const targetFolder = findFolderById(hearchiqueSysFile as Folder, `users/${user?.uid}/${pathFolder}`);
-                    console.log(targetFolder);
+                    
                     targetFolder?.children.push({name:data.name
                         ,url:data.url,
                         ref:data.ref,

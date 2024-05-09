@@ -3,7 +3,6 @@ import {getFileListForUser} from '@/firebase/uploadsSevice'
 import { useAuth } from '@/store/auth-context'
 import { useQuota } from '@/store/uploadsContext'
 import React, { useEffect, useState } from 'react'
-import CardFile from './CardFile'
 import FileSystem from './FileSystem'
 import { initialFolderStructure } from '@/utils/folderStructure'
 
@@ -32,12 +31,6 @@ function SideBare() {
   return (
     <div className='max-md:w-[40%] min-w-[20%] h-screen bg-white/10'>
       <FileSystem initialFolders={initialFolderStructure} />
-      {/* { loading ?
-        <p>Chargement...</p>:
-        fileData.map((data,index)=>{
-          return <CardFile key={index} data={data}/>
-        })
-      } */}
     </div>
   )
 }

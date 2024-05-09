@@ -1,4 +1,4 @@
-import { createFOlderInFirebaseStorage, getFileListForUser } from '@/firebase/uploadsSevice';
+import { createFOlderInFirebaseStorage, deleteFolderFromFirebase, deleteFromFirebase, getFileListForUser } from '@/firebase/uploadsSevice';
 import { useAuth } from '@/store/auth-context';
 import { customFile, useQuota } from '@/store/uploadsContext';
 import { Folder, addFolder, deleteFolder, findFolderById } from '@/utils/folderStructure';
@@ -39,9 +39,10 @@ const FileSystem: React.FC<FileSystemProps> = ({ initialFolders }) => {
     }
 
     const targetFolder = findFolderById(hearchiqueSysFile, parentId as string);
-    console.log(parentId);
+    
     
     if (targetFolder) {
+      console.log(targetFolder);
       const folderName = prompt("Nom du nouveau dossier") || "Nouveau dossier";
       const newFolder: Folder = {
         id: uuidv4(),
@@ -51,6 +52,7 @@ const FileSystem: React.FC<FileSystemProps> = ({ initialFolders }) => {
       };
       await createFOlderInFirebaseStorage(parentId+'/'+folderName);
       targetFolder.children.push(newFolder);
+      console.log(targetFolder);
       setHearchiqueSysFile({ ...hearchiqueSysFile });
     }else {
       console.error(`Le dossier avec ID ${targetFolder} n'a pas été trouvé.`);
@@ -59,19 +61,20 @@ const FileSystem: React.FC<FileSystemProps> = ({ initialFolders }) => {
   };
 
   const deleteFolderById = async (folderId: string) => {
-    // if (user?.uid) {
-    //   try {
-    //     const folderPath = ""; // Définissez le chemin complet du dossier à supprimer
-    //     await deleteFromFirebase(folderPath); // Suppression dans Firebase Storage
-  
-    //     setFolders((prev) => {
-    //       if (!prev) return null; // Si `prev` est null, retournez `null`
-    //       return deleteFolder(prev, folderId); // Utilisez `deleteFolder` pour supprimer le dossier
-    //     });
-    //   } catch (error) {
-    //     console.error("Erreur lors de la suppression du dossier:", error);
-    //   }
-    // }
+    if (user?.uid && hearchiqueSysFile) {
+      const segments = folderId.split('/');
+      segments.pop();
+      const targetFolder = findFolderById(hearchiqueSysFile, segments.join('/'));
+      if (targetFolder) {
+        deleteFolderFromFirebase(folderId).then((res)=>{
+          const newChildren = targetFolder.children.filter(item => (item as Folder).id !== folderId);
+          targetFolder.children = newChildren;
+          setHearchiqueSysFile({...hearchiqueSysFile})
+        }).catch((e)=>{
+          console.log("erreur lors de la suppression de folder");
+        })
+      }
+    }
   };
   const renderFolders = (folders: Folder, depth: number = 0, parentPath = "") => {
     return (
@@ -119,7 +122,7 @@ const FileSystem: React.FC<FileSystemProps> = ({ initialFolders }) => {
       <div className='flex flex-row justify-between items-center px-2'>
         <button 
           className='flex justify-end items-end gap-x-2 my-2' 
-          onClick={() => addFolderToFolder(null, "")} // Créer un dossier à la racine
+          onClick={() => addFolderToFolder(`users/${user?.uid}`, "")} // Créer un dossier à la racine
         >
           <Image src={"/addFolder.png"} width={25} height={25} alt='addF'/>
         </button>

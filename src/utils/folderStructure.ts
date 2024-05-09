@@ -144,7 +144,6 @@ export const traverseStorage = async (
 
 
   const foldersPromises = listResult.prefixes.map(async (subFolderRef) => {
-    console.log("assasasasa         ",folderRef.fullPath);
     const folderContent = await traverseStorage(subFolderRef, folderRef.fullPath); 
 
     return {
@@ -179,7 +178,7 @@ export const findFolderById=(rootFolder: Folder, folderId: string): Folder |unde
   if (rootFolder.id === folderId) {
     return rootFolder;
   }
-
+  
   for (const child of rootFolder.children) {
     if ((child as Folder).children !== undefined) {
       const found = findFolderById(child as Folder, folderId);

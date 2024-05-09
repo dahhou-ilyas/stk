@@ -77,11 +77,31 @@ export function deleteFromFirebase(filePath:string){
     const fileRef=ref(storage,filePath);
     return deleteObject(fileRef).then(()=>{
         console.log("Fichier supprimé avec succès");
-        return true
+        return fileRef
     }).catch((error)=>{
         console.error("Erreur lors de la suppression du fichier :", error);
         throw error;
     })
+}
+
+export function deleteFolderFromFirebase(folderPath:string){
+    const storage = getStorage();
+    const folderRef = ref(storage, folderPath);
+    return listAll(folderRef).then((result) => {
+        const deletePromises = result.items.map((item) => {
+          // Supprime chaque fichier
+          return deleteObject(item);
+        });
+  
+        // Attendre que toutes les suppressions soient terminées
+        return Promise.all(deletePromises);
+      }).then(() => {
+        console.log("Dossier supprimé avec succès.");
+      })
+      .catch((error) => {
+        console.error("Erreur lors de la suppression du dossier :", error);
+        throw error; // Relance l'erreur pour le traitement ultérieur
+      });
 }
 
 export const createFOlderInFirebaseStorage=async (folderPath:string)=>{
