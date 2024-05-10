@@ -178,6 +178,8 @@ export const findFolderById=(rootFolder: Folder, folderId: string): Folder |unde
   if (rootFolder.id === folderId) {
     return rootFolder;
   }
+  console.log("pramier argumetn",rootFolder.id, "folder name   ",rootFolder.name);
+  console.log("deuxieme argumetn",folderId);
   
   for (const child of rootFolder.children) {
     if ((child as Folder).children !== undefined) {

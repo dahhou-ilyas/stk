@@ -84,24 +84,32 @@ export function deleteFromFirebase(filePath:string){
     })
 }
 
-export function deleteFolderFromFirebase(folderPath:string){
+export async function deleteFolderFromFirebase(folderPath: string) {
     const storage = getStorage();
     const folderRef = ref(storage, folderPath);
-    return listAll(folderRef).then((result) => {
-        const deletePromises = result.items.map((item) => {
-          // Supprime chaque fichier
-          return deleteObject(item);
+
+    try {
+        const result = await listAll(folderRef);
+
+        const deletePromises: Promise<void>[] = result.items.map(async (item) => {
+            const metadata = await getMetadata(item);
+
+            if (metadata.contentType === "application/x-directory") {
+                return deleteFolderFromFirebase(item.fullPath);
+            } else {
+                return deleteObject(item);
+            }
         });
-  
-        // Attendre que toutes les suppressions soient terminées
-        return Promise.all(deletePromises);
-      }).then(() => {
-        console.log("Dossier supprimé avec succès.");
-      })
-      .catch((error) => {
+
+        await Promise.all(deletePromises);
+
+        await deleteObject(folderRef);
+
+        console.log("Dossier supprimé avec succès :", folderPath);
+    } catch (error) {
         console.error("Erreur lors de la suppression du dossier :", error);
-        throw error; // Relance l'erreur pour le traitement ultérieur
-      });
+        throw error; // Relancer l'erreur pour un traitement ultérieur
+    }
 }
 
 export const createFOlderInFirebaseStorage=async (folderPath:string)=>{

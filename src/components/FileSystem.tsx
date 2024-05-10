@@ -1,11 +1,10 @@
-import { createFOlderInFirebaseStorage, deleteFolderFromFirebase, deleteFromFirebase, getFileListForUser } from '@/firebase/uploadsSevice';
+import { createFOlderInFirebaseStorage, deleteFolderFromFirebase, getFileListForUser } from '@/firebase/uploadsSevice';
 import { useAuth } from '@/store/auth-context';
 import { customFile, useQuota } from '@/store/uploadsContext';
-import { Folder, addFolder, deleteFolder, findFolderById } from '@/utils/folderStructure';
+import { Folder, findFolderById } from '@/utils/folderStructure';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
-import { FaFileAlt, FaFolder, FaPlus, FaTrash } from 'react-icons/fa';
-import { v4 as uuidv4 } from 'uuid';
+import { useEffect } from 'react';
+import {FaPlus, FaTrash } from 'react-icons/fa';
 import CardFile from './CardFile';
 
 interface FileSystemProps {
@@ -45,7 +44,7 @@ const FileSystem: React.FC<FileSystemProps> = ({ initialFolders }) => {
       console.log(targetFolder);
       const folderName = prompt("Nom du nouveau dossier") || "Nouveau dossier";
       const newFolder: Folder = {
-        id: uuidv4(),
+        id: parentId+'/'+folderName,
         name: folderName,
         parentId,
         children: [],
@@ -107,8 +106,6 @@ const FileSystem: React.FC<FileSystemProps> = ({ initialFolders }) => {
                   <CardFile key={item.name+index} data={item as customFile}/>
                 )}
               </div>
-  
-              {/* Si c'est un dossier, récursion pour ses enfants */}
               {isFolder && renderFolders(item as Folder, depth + 10, newParentPath)}
             </li>
           );

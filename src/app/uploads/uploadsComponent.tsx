@@ -26,9 +26,14 @@ function UploadsComponent({}: Props) {
                 toast.success("your file is succefily uploaded");
                 setIsupload(false);
                 setFile(null);
-                if(data!=undefined){
-                    const targetFolder = findFolderById(hearchiqueSysFile as Folder, `users/${user?.uid}/${pathFolder}`);
-                    
+                if(data!=undefined && hearchiqueSysFile){
+                    let idPth;
+                    if(pathFolder){
+                        idPth=`users/${user?.uid}/${pathFolder}`
+                    }else{
+                        idPth=`users/${user?.uid}`
+                    }
+                    const targetFolder = findFolderById(hearchiqueSysFile as Folder, idPth);
                     targetFolder?.children.push({name:data.name
                         ,url:data.url,
                         ref:data.ref,
@@ -104,7 +109,7 @@ function UploadsComponent({}: Props) {
                     <p className="mb-2 text-sm text-neutral dark:text-neutral">
                         <span className="font-semibold">Click to upload</span> or drag and drop
                     </p>
-                    {file ? (<p className='pt-3 text-x text-center text-neutral dark:text-neutral'>{file[0].name}</p>):(<p className="text-xs text-neutral text-center dark:text-neutral">
+                    {file ? (<p className='pt-3 text-x text-center text-neutral dark:text-neutral'>{file[0]?.name}</p>):(<p className="text-xs text-neutral text-center dark:text-neutral">
                         Anything to uploads
                     </p>)}
                 </div>
