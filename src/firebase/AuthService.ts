@@ -1,4 +1,4 @@
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, setPersistence, browserLocalPersistence, User, updateProfile, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, setPersistence, browserLocalPersistence, User, updateProfile, GoogleAuthProvider, signInWithPopup, FacebookAuthProvider } from 'firebase/auth';
 import { auth } from './firebase';
 import { getStorage, ref, uploadBytes, uploadString } from 'firebase/storage';
 import app from './firebase';
@@ -66,3 +66,12 @@ export const SignInWithGoogle = async () =>{
     }
 }
 
+
+export const SignInWithFacbook=async ()=>{
+    const provider=new FacebookAuthProvider();
+    try {
+        const result =await signInWithPopup(auth,provider);
+    } catch (error) {
+        console.error("il ya une erreur avec facbook auth "+error);
+    }
+}

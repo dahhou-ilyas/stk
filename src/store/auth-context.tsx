@@ -4,7 +4,7 @@ import { auth } from "@/firebase/firebase";
 import { createContext } from 'react';
 
 import { User, onAuthStateChanged } from 'firebase/auth'; //type User import
-import { SignUp,SignOut,SignIn,SignInWithGoogle } from '@/firebase/AuthService';
+import { SignUp,SignOut,SignIn,SignInWithGoogle, SignInWithFacbook } from '@/firebase/AuthService';
 import { toast } from 'react-hot-toast';
 
 //IAuth context
@@ -15,6 +15,7 @@ export  interface  IAuth {
     signUp: (email:string, password:string,username:string) =>  void;
     signOut: () =>  void;
     signInWithGoogle:()=>void;
+    signWithFacbook:()=>void;
     isLogin:boolean,
     setIsLogin:Dispatch<SetStateAction<boolean>>;
     
@@ -29,6 +30,7 @@ export const AuthContext = createContext<IAuth>({
     signOut: () => {},
     setIsLogin:()=>{},
     signInWithGoogle:()=>{},
+    signWithFacbook:()=>{}
 });
 
 export  const  useAuth  = () =>  useContext(AuthContext);
@@ -109,6 +111,19 @@ function AuthProvider({ children }:  {children: React.ReactNode}) {
         }
     }
 
+    const signWithFacbook=async ()=>{
+        setIsLoading(true)
+        try {
+            await SignInWithFacbook();
+            setIsLoading(false);
+            router.push("/uploads")
+            toast("signup wxith facbook are succes");
+        } catch (error) {
+            setIsLoading(false);
+            toast("error when authenticating with google")
+        }
+    }
+
 
     
 
@@ -120,7 +135,8 @@ function AuthProvider({ children }:  {children: React.ReactNode}) {
         signUp,
         signOut,
         setIsLogin,
-        signInWithGoogle
+        signInWithGoogle,
+        signWithFacbook
         
     }
 
