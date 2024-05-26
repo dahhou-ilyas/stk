@@ -38,7 +38,7 @@ function NavBar() {
   }, []);
 
   return (
-    <div className="navbar bg-base-300 pb-2">
+    <div className="navbar bg-base-300 pb-2 pt-4">
       <div className="flex-1">
         <a className="btn btn-ghost text-xl">
           <Image alt="" src="/fichiers4u.svg" height={30} width={30} />

@@ -26,6 +26,7 @@ function CardFile({data}: Props) {
       }
       setHearchiqueSysFile({...hearchiqueSysFile as Folder})
       setQuotaUsed(prevQuoata=>prevQuoata-(data.size/(1024*1024)))
+      toast.success("file is deleted")
     }).catch((err)=>{
       console.log(err);
       toast.error("file not delted");
